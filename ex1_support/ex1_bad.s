@@ -115,27 +115,11 @@ _reset:
 	LDR R7, =0xFF
 	STR R7, [GPIO_I, #GPIO_DOUT]
 
-	LDR R7, =0x22222222
-	STR R7, [GPIO, #GPIO_EXTIPSELL]
-
-	LDR R7, =0xFF
-	STR R7, [GPIO, #GPIO_EXTIRISE]
-	STR R7, [GPIO, #GPIO_EXTIFALL]
-	STR R7, [GPIO, #GPIO_IEN]
-
-	LDR R7, =0x802
-	LDR R8, =ISER0
-	STR R7, [R8]	
-	
-
-	B main
+	B gpio_handler
 
 	.thumb_func
 main:
-	LDR R7, =0x6
-	LDR R8, =SCR
-	STR R7, [R8]
-	WFI
+	BL .
 
 	.thumb_func
 sleeper:
@@ -176,13 +160,11 @@ led_loop:
 
         .thumb_func
 gpio_handler:  
-	LDR R7, [GPIO, GPIO_IF]
-	STR R7, [GPIO, GPIO_IFC]
 
 	LDR R7, [GPIO_I, #GPIO_DIN]
 	LSL R7, R7, #8
 	STR R7,[GPIO_O, #GPIO_DOUT]
-	BX LR
+	B gpio_handler
 	
 	/////////////////////////////////////////////////////////////////////////////
         .thumb_func
