@@ -110,24 +110,19 @@ _reset:
 	// Set port C 0-7 to input
 	LDR R7, =0x33333333
 	STR R7, [GPIO_I, #GPIO_MODEL]
-	LDR R7, =0xFF
-	STR R7, [GPIO_I, #GPIO_DOUT]
-
-
 	.thumb_func
 main:
 	BL .
 
 	.thumb_func
 sleeper:
-	LDR R3, =0x30000
+	LDR R3, =0x300000
 sleeper_loop:
 	SUBS R3, #1
 	BNE sleeper_loop
 	BX lr
 
 
-    b .  // do nothing
 	
 	/////////////////////////////////////////////////////////////////////////////
 	//
@@ -140,6 +135,7 @@ sleeper_loop:
 		.thumb_func
 led_test:
 	PUSH {LR}
+	STR R9, =0x8
 	BL led_loop
 
 
@@ -147,7 +143,7 @@ led_test:
 led_loop:
 	PUSH {LR}
 	STR R7, [GPIO_O, #GPIO_DOUT]
-	BL wait
+	BL sleeper
 	ROR R7, R8
 	SUBS R9, #1
 	BNE led_loop
@@ -157,7 +153,10 @@ led_loop:
         .thumb_func
 gpio_handler:  
 
-	      b .  // do nothing
+				LDR R7, [GPIO_I, #GPIO_DIN]
+				LSL R7, R7, #8
+				STR [GPIO_O, #GPIO_DOUTSET],  R7
+				B gpio_handler
 	
 	/////////////////////////////////////////////////////////////////////////////
         .thumb_func
