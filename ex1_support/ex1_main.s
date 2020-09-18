@@ -87,11 +87,17 @@ _reset:
 	GPIO_I .req R5
 	GPIO .req R6
 
+	// Keep the base addresses in three dedicated registers.
+	// Port A is used to drive the LEDs
 	LDR GPIO_O, =GPIO_PA_BASE
+
+	// Port C is used to read the button inputs
 	LDR GPIO_I, =GPIO_PC_BASE
+
+	// GPIO Settings and BASE
 	LDR GPIO, =GPIO_BASE
 
-	// Enable High Frequency Peripheral Clock
+	// Enable Clock
 	LDR R9, =CMU_BASE
 	LDR R7, [R9, #CMU_HFPERCLKEN0]
 	MOV R8, #1
@@ -103,7 +109,6 @@ _reset:
 	LDR R7, =0x55555555
 	STR R7, [GPIO_O, #GPIO_MODEH]
 
-	//BL led_test
 	LDR R7, =0x5555
 	STR R7, [GPIO_O, #GPIO_DOUTSET]
 
@@ -114,81 +119,48 @@ _reset:
 	// Set internal pullup for input pins
 	LDR R7, =0xFF
 	STR R7, [GPIO_I, #GPIO_DOUT]
+
+	LDR R7, =0x22222222
+	STR R7, [GPIO, #GPIO_EXTIPSELL]
+
+	LDR R7, =0xFF
+	STR R7, [GPIO, #GPIO_EXTIRISE]
+	STR R7, [GPIO, #GPIO_EXTIFALL]
+	STR R7, [GPIO, #GPIO_IEN]
+
+	LDR R7, =0x802
+	LDR R8, =ISER0
+	STR R7, [R8]	
 	
-	// R8 used for last input from buttons
-	MOV R8, =0x0
-	B gpio_handler
+
+	B main
 
 	.thumb_func
 main:
-	// R7: Newest input, R8: Old input, R9: Current output, R10: Contains 1 if new input has changed to 1, R11: contains 1 if button is pressed
-	LDR R7, [GPIO_I, #GPIO_DIN]
-	AND R10, R7, R8
-	CBZ R10, main
-	B gpio_handler
-	
+	LDR R7, =0x6
+	LDR R8, =SCR
+	STR R7, [R8]
+	WFI
+
+
 	
 	/////////////////////////////////////////////////////////////////////////////
 	//
-	// GPIO handler
-	// The CPU will jump here when there is a GPIO interrupt
+  // GPIO handler
+  // The CPU will jump here when there is a GPIO interrupt
 	//
 	/////////////////////////////////////////////////////////////////////////////
 	
         .thumb_func
 gpio_handler:  
-	
-	AND R11, R10, 0x1	//Check SW1 (left on left keypad) is pressed
-	CBZ R11, turn_on_led
+	LDR R7, [GPIO, GPIO_IF]
+	STR R7, [GPIO, GPIO_IFC]
 
-	//rotate_left()
-	ROR R9, 0xF
-
-turn_on_led:
-	AND R11, R10, 0x2	//Check SW2 (up on left keypad) is pressed
-	CBZ R11, rotate_right
+	LDR R7, [GPIO_I, #GPIO_DIN]
+	LSL R7, R7, #8
+	STR R7,[GPIO_O, #GPIO_DOUT]
+	BX LR
 	
-	ORR R9, R9, 0x0101
-	
-rotate_right:
-	AND R11, R10, 0x4	//Check SW3 (right on left keypad) is pressed
-	CBZ R11, turn_off_led
-	
-	//rotate_right()
-	ROR R9, 0x1
-	
-turn_off_led:
-	AND R11, R10, 0x8	//Check SW4 (down on left keypad) is pressed
-	CBZ R11, invert
-	
-	AND R9, R9, 0xFEFE
-	
-invert:
-	AND R11, R10, 0x10	//Check SW5 (left on right keypad) is pressed
-	CBZ R11, turn_on_all_led
-	
-	NOT R9, R9
-	
-turn_on_all_led:
-	AND R11, R10, 0x20	//Check SW6 (up on right keypad) is pressed
-	CBZ R11, turn_off_all_led
-	
-	MOV R9, 0xFF
-
-turn_off_all_led:
-	AND R11, R10, 0x80	//Check SW8 (down on right keypad) is pressed
-	CBZ R11, gpio_handler_write
-	
-	MOV R9, 0x00
-	
-gpio_handler_write:	
-	NOT R8, R7	
-
-	STR R9,[GPIO_O, #GPIO_DOUT]
-	
-	B main
-
-
 	/////////////////////////////////////////////////////////////////////////////
         .thumb_func
 dummy_handler:  

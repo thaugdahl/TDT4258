@@ -1,3 +1,5 @@
+
+
         .syntax unified
 	
 	      .include "efm32gg.s"
@@ -115,28 +117,16 @@ _reset:
 	LDR R7, =0xFF
 	STR R7, [GPIO_I, #GPIO_DOUT]
 
-	LDR R7, =0xFFFFFFFF
-	STR R7, [GPIO_O, #GPIO_DOUT]
-	
-	// R0 used for last input from buttons
-	MOV R0, 0x0
+	B gpio_handler
+
+.thumb_func
+main:
+	LDR R7, [GPIO_I, #GPIO_DIN]
+	LSL R7, R7, #8
+	STR R7,[GPIO_O, #GPIO_DOUT]
 	B main
 
-	.thumb_func
-main:
-	// R7: Newest input, R0: Old input, R1: Current output, R2: Contains 1 if new input has changed to 1, R3: contains 1 if button is pressed
-	LDR R7, [GPIO_I, #GPIO_DIN]
-	AND R2, R7, R0
-	CMP R2, 0x0
 
-	LDR R8, =0xFFFFFFFF
-	STR R8, [GPIO_O, #GPIO_DOUT]
-
-
-	//BEQ main
-
-	B gpio_handler
-	
 	
 	/////////////////////////////////////////////////////////////////////////////
 	//
@@ -147,65 +137,9 @@ main:
 	
         .thumb_func
 gpio_handler:  
+	B .
 
-	//LDR R8, =0xFFFFFFFF
-	//STR R8, [GPIO_O, #GPIO_DOUT]
-	
-	AND R3, R2, 0x1	//Check SW1 (left on left keypad) is pressed
-	CBZ R3, turn_on_led
-
-	//rotate_left()
-	ROR R1, 0x1F
-
-turn_on_led:
-	AND R3, R2, 0x2	//Check SW2 (up on left keypad) is pressed
-	CBZ R3, rotate_right
-
-	LDR R8, =0xFEFEFEFE
 		
-	AND R1, R1, R8
-	
-rotate_right:
-	AND R3, R2, 0x4	//Check SW3 (right on left keypad) is pressed
-	CBZ R3, turn_off_led
-	
-	//rotate_right()
-	ROR R1, 0x1
-	
-turn_off_led:
-	AND R3, R2, 0x8	//Check SW4 (down on left keypad) is pressed
-	CBZ R3, invert
-
-	LDR R8, =0x01010101
-
-	ORR R1, R1, R8
-	
-invert:
-	AND R3, R2, 0x10	//Check SW5 (left on right keypad) is pressed
-	CBZ R3, turn_on_all_led
-	
-	MVN R1, R1
-	
-turn_on_all_led:
-	AND R3, R2, 0x20	//Check SW6 (up on right keypad) is pressed
-	CBZ R3, turn_off_all_led
-	
-	LDR R1, =0x00000000
-
-turn_off_all_led:
-	AND R3, R2, 0x80	//Check SW8 (down on right keypad) is pressed
-	CBZ R3, gpio_handler_write
-	
-	LDR R1, =0xFFFFFFFF
-	
-gpio_handler_write:	
-	MVN R0, R7	
-
-	STR R1,[GPIO_O, #GPIO_DOUT]
-	
-	B main
-
-
 	/////////////////////////////////////////////////////////////////////////////
         .thumb_func
 dummy_handler:  
