@@ -131,7 +131,7 @@ main:
 	LDR R7, [GPIO_I, #GPIO_DIN]
 	AND R3, R7, R0
 	ORR R2, R7, R0
-	CBNZ R3, skip
+	CBZ R3, skip
 	MVN R0, R7
 skip:
 	MVN R2, R2
