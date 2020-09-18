@@ -80,18 +80,24 @@
 
 	      .globl  _reset
 	      .type   _reset, %function
-        .thumb_func
+.thumb_func
 _reset: 
 	// Set up aliases for constant-valued registers
 	GPIO_O .req R4
 	GPIO_I .req R5
 	GPIO .req R6
 
+	// Keep the base addresses in three dedicated registers.
+	// Port A is used to drive the LEDs
 	LDR GPIO_O, =GPIO_PA_BASE
+
+	// Port C is used to read the button inputs
 	LDR GPIO_I, =GPIO_PC_BASE
+
+	// GPIO Settings and BASE
 	LDR GPIO, =GPIO_BASE
 
-	// Enable High Frequency Peripheral Clock
+	// Enable Clock
 	LDR R9, =CMU_BASE
 	LDR R7, [R9, #CMU_HFPERCLKEN0]
 	MOV R8, #1
@@ -99,13 +105,12 @@ _reset:
 	ORR R7, R7, R8
 	STR R7, [R9, #CMU_HFPERCLKEN0]
 
+	MOV R7, 0x1
+	STR R7, [GPIO_O, #GPIO_CTRL]	
+
 	// Low drive strength
 	LDR R7, =0x55555555
 	STR R7, [GPIO_O, #GPIO_MODEH]
-
-	//BL led_test
-	LDR R7, =0x5555
-	STR R7, [GPIO_O, #GPIO_DOUTSET]
 
 	// Set port C 0-7 to input
 	LDR R7, =0x33333333
@@ -115,28 +120,33 @@ _reset:
 	LDR R7, =0xFF
 	STR R7, [GPIO_I, #GPIO_DOUT]
 
-	LDR R7, =0xFFFFFFFF
-	STR R7, [GPIO_O, #GPIO_DOUT]
+	LDR R1, =0x00000000
+	STR R1, [GPIO_O, #GPIO_DOUTSET]
+
+	LDR R7, =0x22222222
+	STR R7, [GPIO, #GPIO_EXTIPSELL]
+
+	LDR R7, =0xFF
+	STR R7, [GPIO, #GPIO_EXTIRISE]
+	//STR R7, [GPIO, #GPIO_EXTIFALL]
+	STR R7, [GPIO, #GPIO_IEN]
+
+	LDR R7, =0x802
+	LDR R8, =ISER0
+	STR R7, [R8]	
 	
-	// R0 used for last input from buttons
-	MOV R0, 0x0
+
 	B main
 
-	.thumb_func
+.thumb_func
 main:
-	// R7: Newest input, R0: Old input, R1: Current output, R2: Contains 1 if new input has changed to 1, R3: contains 1 if button is pressed
-	LDR R7, [GPIO_I, #GPIO_DIN]
-	AND R2, R7, R0
-	CMP R2, 0x0
-
-	LDR R8, =0xFFFFFFFF
-	STR R8, [GPIO_O, #GPIO_DOUT]
+	LDR R7, =0x6
+	LDR R8, =SCR
+	STR R7, [R8]
+	WFI
+	B main
 
 
-	//BEQ main
-
-	B gpio_handler
-	
 	
 	/////////////////////////////////////////////////////////////////////////////
 	//
@@ -145,68 +155,130 @@ main:
 	//
 	/////////////////////////////////////////////////////////////////////////////
 	
-        .thumb_func
+.thumb_func
 gpio_handler:  
+	// Entrypoint for GPIO Interrupts
 
-	//LDR R8, =0xFFFFFFFF
-	//STR R8, [GPIO_O, #GPIO_DOUT]
-	
-	AND R3, R2, 0x1	//Check SW1 (left on left keypad) is pressed
+
+	// Store Interrupt Flags so they can be referenced and cleared at the end of the handler
+	LDR R2, [GPIO, #GPIO_IF]
+
+	// GPIO Handler
+	// ------------------------------------------------------------
+	// Button Mappings:
+	// SW1: Rotate Lights Right
+	// SW2: Turn Leftmost Light On
+	// SW3: Rotate Lights Left
+	// SW4: Turn Leftmost Light Off
+	// SW5: Invert Lights
+	// SW6: Turn All Lights On
+	// SW7: Toggle Drive Strength
+	// SW8: Turn All Lights Off
+	// ------------------------------------------------------------
+
+	//Check SW1 (left on left keypad) is pressed
+	AND R3, R2, 0x1		
 	CBZ R3, turn_on_led
 
 	//rotate_left()
-	ROR R1, 0x1F
+	ROR R1, 0x1
 
+.thumb_func
 turn_on_led:
-	AND R3, R2, 0x2	//Check SW2 (up on left keypad) is pressed
+	//Check SW2 (up on left keypad) is pressed
+	AND R3, R2, 0x2	
 	CBZ R3, rotate_right
 
 	LDR R8, =0xFEFEFEFE
-		
 	AND R1, R1, R8
 	
+.thumb_func
 rotate_right:
-	AND R3, R2, 0x4	//Check SW3 (right on left keypad) is pressed
+	//Check SW3 (right on left keypad) is pressed
+	AND R3, R2, 0x4	
 	CBZ R3, turn_off_led
 	
 	//rotate_right()
-	ROR R1, 0x1
+	ROR R1, 0x1F
 	
+.thumb_func
 turn_off_led:
-	AND R3, R2, 0x8	//Check SW4 (down on left keypad) is pressed
+	//Check SW4 (down on left keypad) is pressed
+	AND R3, R2, 0x8	
 	CBZ R3, invert
 
 	LDR R8, =0x01010101
 
 	ORR R1, R1, R8
 	
+.thumb_func
 invert:
-	AND R3, R2, 0x10	//Check SW5 (left on right keypad) is pressed
+	//Check SW5 (left on right keypad) is pressed
+	AND R3, R2, 0x10	
+	// If not, check next
 	CBZ R3, turn_on_all_led
 	
 	MVN R1, R1
 	
+.thumb_func
 turn_on_all_led:
-	AND R3, R2, 0x20	//Check SW6 (up on right keypad) is pressed
+	//Check SW6 (up on right keypad) is pressed
+	AND R3, R2, 0x20	
+	// If not, check next
 	CBZ R3, turn_off_all_led
 	
 	LDR R1, =0x00000000
 
+.thumb_func
 turn_off_all_led:
-	AND R3, R2, 0x80	//Check SW8 (down on right keypad) is pressed
-	CBZ R3, gpio_handler_write
+	//Check SW8 (down on right keypad) is pressed
+	AND R3, R2, 0x80	
+	// If not, check next
+	CBZ R3, toggle_drive_strength
 	
 	LDR R1, =0xFFFFFFFF
+
+.thumb_func
+toggle_drive_strength:
+	// Check SW7 (Right on right keypad) is pressed
+	AND R3, R2, 0x40 	
+	// If not, check next
+	CBZ R3, gpio_handler_write
 	
+	// Check current drive strength
+	LDR R7, [GPIO_O, GPIO_CTRL]	
+	AND R3, R7, 0x2
+	
+	// If low, set high, else - fall through
+	CBZ R3, set_highest_drivestrength
+
+
+.thumb_func
+set_lowest_drivestrength:
+	MOV R3, 0x1
+	STR R3, [GPIO_O, #GPIO_CTRL]
+	B gpio_handler_write
+
+.thumb_func
+set_highest_drivestrength:
+	MOV R3, 0x2
+	STR R3, [GPIO_O, #GPIO_CTRL]
+	
+
+
+.thumb_func
 gpio_handler_write:	
-	MVN R0, R7	
+	MVN R0, R7
 
 	STR R1,[GPIO_O, #GPIO_DOUT]
+
+	// Clear interrupt flags
+	STR R2, [GPIO, #GPIO_IFC]
 	
-	B main
+	BX LR
 
 
-	/////////////////////////////////////////////////////////////////////////////
-        .thumb_func
+/////////////////////////////////////////////////////////////////////////////
+.thumb_func
 dummy_handler:  
         b .  // do nothing
