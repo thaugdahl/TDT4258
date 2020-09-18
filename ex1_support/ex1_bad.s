@@ -147,10 +147,6 @@ main:
 	
         .thumb_func
 gpio_handler:  
-
-	//LDR R8, =0xFFFFFFFF
-	//STR R8, [GPIO_O, #GPIO_DOUT]
-	
 	AND R3, R2, 0x1	//Check SW1 (left on left keypad) is pressed
 	CBZ R3, turn_on_led
 
@@ -193,10 +189,38 @@ turn_on_all_led:
 	LDR R1, =0x00000000
 
 turn_off_all_led:
-	AND R3, R2, 0x80	//Check SW8 (down on right keypad) is pressed
-	CBZ R3, gpio_handler_write
+	//Check SW8 (down on right keypad) is pressed
+	AND R3, R2, 0x80	
+	// If not, check next
+	CBZ R3, toggle_drive_strength
 	
 	LDR R1, =0xFFFFFFFF
+
+.thumb_func
+toggle_drive_strength:
+	// Check SW7 (Right on right keypad) is pressed
+	AND R3, R2, 0x40 	
+	// If not, check next
+	CBZ R3, gpio_handler_write
+	
+	// Check current drive strength
+	LDR R8, [GPIO_O, GPIO_CTRL]	
+	AND R3, R8, 0x2
+	
+	// If low, set high, else - fall through
+	CBZ R3, set_highest_drivestrength
+
+
+.thumb_func
+set_lowest_drivestrength:
+	MOV R3, 0x1
+	STR R3, [GPIO_O, #GPIO_CTRL]
+	B gpio_handler_write
+
+.thumb_func
+set_highest_drivestrength:
+	MOV R3, 0x2
+	STR R3, [GPIO_O, #GPIO_CTRL]
 	
 gpio_handler_write:	
 	MVN R0, R7	
