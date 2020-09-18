@@ -124,7 +124,8 @@ main:
 	// R7: Newest input, R0: Inverted old input, R1: Current output, R2: Contains 1 if new input has changed to 1, R3: contains 1 if button is pressed
 	LDR R7, [GPIO_I, #GPIO_DIN]
 	AND R2, R7, R0
-	CBZ R2, main
+	CMP R2, 0x00
+	BEQ main
 	B gpio_handler
 	
 	
