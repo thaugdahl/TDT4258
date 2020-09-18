@@ -167,7 +167,7 @@ invert:
 	AND R3, R2, 0x10	//Check SW5 (left on right keypad) is pressed
 	CBZ R3, turn_on_all_led
 	
-	NOT R1, R1
+	MVN R1, R1
 	
 turn_on_all_led:
 	AND R3, R2, 0x20	//Check SW6 (up on right keypad) is pressed
@@ -182,7 +182,7 @@ turn_off_all_led:
 	MOV R1, 0x00
 	
 gpio_handler_write:	
-	NOT R0, R7	
+	MVN R0, R7	
 
 	STR R1,[GPIO_O, #GPIO_DOUT]
 	
