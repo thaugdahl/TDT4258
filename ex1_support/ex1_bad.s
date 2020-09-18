@@ -115,16 +115,16 @@ _reset:
 	LDR R7, =0xFF
 	STR R7, [GPIO_I, #GPIO_DOUT]
 	
-	// R8 used for last input from buttons
-	MOV R8, =0x0
+	// R0 used for last input from buttons
+	MOV R0, =0xFFFF
 	B gpio_handler
 
 	.thumb_func
 main:
-	// R7: Newest input, R8: Old input, R9: Current output, R10: Contains 1 if new input has changed to 1, R11: contains 1 if button is pressed
+	// R7: Newest input, R0: Inverted old input, R1: Current output, R2: Contains 1 if new input has changed to 1, R3: contains 1 if button is pressed
 	LDR R7, [GPIO_I, #GPIO_DIN]
-	AND R10, R7, R8
-	CBZ R10, main
+	AND R2, R7, R0
+	CBZ R2, main
 	B gpio_handler
 	
 	
@@ -138,53 +138,53 @@ main:
         .thumb_func
 gpio_handler:  
 	
-	AND R11, R10, 0x1	//Check SW1 (left on left keypad) is pressed
-	CBZ R11, turn_on_led
+	AND R3, R2, 0x1	//Check SW1 (left on left keypad) is pressed
+	CBZ R3, turn_on_led
 
 	//rotate_left()
-	ROR R9, 0xF
+	ROR R1, 0xF
 
 turn_on_led:
-	AND R11, R10, 0x2	//Check SW2 (up on left keypad) is pressed
-	CBZ R11, rotate_right
+	AND R3, R2, 0x2	//Check SW2 (up on left keypad) is pressed
+	CBZ R3, rotate_right
 	
-	ORR R9, R9, 0x0101
+	ORR R1, R1, 0x01010101
 	
 rotate_right:
-	AND R11, R10, 0x4	//Check SW3 (right on left keypad) is pressed
-	CBZ R11, turn_off_led
+	AND R3, R2, 0x4	//Check SW3 (right on left keypad) is pressed
+	CBZ R3, turn_off_led
 	
 	//rotate_right()
-	ROR R9, 0x1
+	ROR R1, 0x1
 	
 turn_off_led:
-	AND R11, R10, 0x8	//Check SW4 (down on left keypad) is pressed
-	CBZ R11, invert
+	AND R3, R2, 0x8	//Check SW4 (down on left keypad) is pressed
+	CBZ R3, invert
 	
-	AND R9, R9, 0xFEFE
+	AND R1, R1, 0xFEFEFEFE
 	
 invert:
-	AND R11, R10, 0x10	//Check SW5 (left on right keypad) is pressed
-	CBZ R11, turn_on_all_led
+	AND R3, R2, 0x10	//Check SW5 (left on right keypad) is pressed
+	CBZ R3, turn_on_all_led
 	
-	NOT R9, R9
+	NOT R1, R1
 	
 turn_on_all_led:
-	AND R11, R10, 0x20	//Check SW6 (up on right keypad) is pressed
-	CBZ R11, turn_off_all_led
+	AND R3, R2, 0x20	//Check SW6 (up on right keypad) is pressed
+	CBZ R3, turn_off_all_led
 	
-	MOV R9, 0xFF
+	MOV R1, 0xFF
 
 turn_off_all_led:
-	AND R11, R10, 0x80	//Check SW8 (down on right keypad) is pressed
-	CBZ R11, gpio_handler_write
+	AND R3, R2, 0x80	//Check SW8 (down on right keypad) is pressed
+	CBZ R3, gpio_handler_write
 	
-	MOV R9, 0x00
+	MOV R1, 0x00
 	
 gpio_handler_write:	
-	NOT R8, R7	
+	NOT R0, R7	
 
-	STR R9,[GPIO_O, #GPIO_DOUT]
+	STR R1,[GPIO_O, #GPIO_DOUT]
 	
 	B main
 
