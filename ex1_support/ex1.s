@@ -134,15 +134,16 @@ _reset:
 	LDR R7, =0x802
 	LDR R8, =ISER0
 	STR R7, [R8]	
-	
+
+	LDR R7, =0x6
+	LDR R8, =SCR
+	STR R7, [R8]
+
 
 	B main
 
 .thumb_func
 main:
-	LDR R7, =0x6
-	LDR R8, =SCR
-	STR R7, [R8]
 	WFI
 	B main
 
