@@ -126,14 +126,15 @@ _reset:
 main:
 	// R7: Newest input, R0: Old input, R1: Current output, R2: Contains 1 if new input has changed to 1, R3: contains 1 if button is pressed
 	LDR R7, [GPIO_I, #GPIO_DIN]
-	AND R2, R7, R0
+	AND R3, R7, R0
+	ORR R2, R7, R0
+	CBNZ R3, skip
+	MVN R0, R7
+skip:
+	MVN R2, R2
 	CMP R2, 0x0
 
-	LDR R8, =0xFFFFFFFF
-	STR R8, [GPIO_O, #GPIO_DOUT]
-
-
-	//BEQ main
+	BEQ main
 
 	B gpio_handler
 	
