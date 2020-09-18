@@ -91,7 +91,7 @@ _reset:
 	LDR GPIO_I, =GPIO_PC_BASE
 	LDR GPIO, =GPIO_BASE
 
-	// Enable Clock
+	// Enable High Frequency Peripheral Clock
 	LDR R9, =CMU_BASE
 	LDR R7, [R9, #CMU_HFPERCLKEN0]
 	MOV R8, #1
@@ -121,43 +121,14 @@ _reset:
 main:
 	BL .
 
-	.thumb_func
-sleeper:
-	LDR R3, =0x3000000
-	.thumb_func
-sleeper_loop:
-	SUBS R3, #1
-	BNE sleeper_loop
-	BX lr
-
-
 	
 	/////////////////////////////////////////////////////////////////////////////
 	//
-  // GPIO handler
-  // The CPU will jump here when there is a GPIO interrupt
+	// GPIO handler
+	// The CPU will jump here when there is a GPIO interrupt
 	//
 	/////////////////////////////////////////////////////////////////////////////
 	
-
-		.thumb_func
-led_test:
-	PUSH {LR}
-	MOV R9, #8
-	BL led_loop
-
-
-	.thumb_func
-led_loop:
-	PUSH {LR}
-	STR R7, [GPIO_O, #GPIO_DOUT]
-	BL sleeper
-	ROR R7, R8
-	SUBS R9, #1
-	BNE led_loop
-	POP {PC}
-
-
         .thumb_func
 gpio_handler:  
 

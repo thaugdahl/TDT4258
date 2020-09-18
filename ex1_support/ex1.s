@@ -87,8 +87,14 @@ _reset:
 	GPIO_I .req R5
 	GPIO .req R6
 
+	// Keep the base addresses in three dedicated registers.
+	// Port A is used to drive the LEDs
 	LDR GPIO_O, =GPIO_PA_BASE
+
+	// Port C is used to read the button inputs
 	LDR GPIO_I, =GPIO_PC_BASE
+
+	// GPIO Settings and BASE
 	LDR GPIO, =GPIO_BASE
 
 	// Enable Clock
@@ -103,7 +109,6 @@ _reset:
 	LDR R7, =0x55555555
 	STR R7, [GPIO_O, #GPIO_MODEH]
 
-	//BL led_test
 	LDR R7, =0x5555
 	STR R7, [GPIO_O, #GPIO_DOUTSET]
 
@@ -137,15 +142,6 @@ main:
 	STR R7, [R8]
 	WFI
 
-	.thumb_func
-sleeper:
-	LDR R3, =0x3000000
-	.thumb_func
-sleeper_loop:
-	SUBS R3, #1
-	BNE sleeper_loop
-	BX lr
-
 
 	
 	/////////////////////////////////////////////////////////////////////////////
@@ -155,25 +151,6 @@ sleeper_loop:
 	//
 	/////////////////////////////////////////////////////////////////////////////
 	
-
-		.thumb_func
-led_test:
-	PUSH {LR}
-	MOV R9, #8
-	BL led_loop
-
-
-	.thumb_func
-led_loop:
-	PUSH {LR}
-	STR R7, [GPIO_O, #GPIO_DOUT]
-	BL sleeper
-	ROR R7, R8
-	SUBS R9, #1
-	BNE led_loop
-	POP {PC}
-
-
         .thumb_func
 gpio_handler:  
 	LDR R7, [GPIO, GPIO_IF]
