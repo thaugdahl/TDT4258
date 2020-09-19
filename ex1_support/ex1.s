@@ -1,6 +1,6 @@
-        .syntax unified
-	
-	      .include "efm32gg.s"
+	.syntax unified
+
+	.include "efm32gg.s"
 
 	/////////////////////////////////////////////////////////////////////////////
 	//
@@ -74,7 +74,7 @@
 	/////////////////////////////////////////////////////////////////////////////
 	//
 	// Reset handler
-  // The CPU will start executing here after a reset
+	// The CPU will start executing here after a reset
 	//
 	/////////////////////////////////////////////////////////////////////////////
 
@@ -105,14 +105,17 @@ _reset:
 	ORR R7, R7, R8
 	STR R7, [R9, #CMU_HFPERCLKEN0]
 
+	// Set Drive Mode to LOWEST on output port (EFM32GG Ref. Manual 32.5.1)
 	MOV R7, 0x1
 	STR R7, [GPIO_O, #GPIO_CTRL]	
 
-	// Low drive strength
+	// Push-pull output with drive strength set by DRIVEMODE
+	// DRIVEMODE is set directly above
 	LDR R7, =0x55555555
 	STR R7, [GPIO_O, #GPIO_MODEH]
 
-	// Set port C 0-7 to input
+	// Set port C 0-7 to input with filter.
+	// Pull direction is set just below
 	LDR R7, =0x33333333
 	STR R7, [GPIO_I, #GPIO_MODEL]
 
@@ -120,21 +123,29 @@ _reset:
 	LDR R7, =0xFF
 	STR R7, [GPIO_I, #GPIO_DOUT]
 
-	LDR R1, =0x00000000
-	STR R1, [GPIO_O, #GPIO_DOUTSET]
 
+	// Ensure that all LEDs are turned off at the start	
+	LDR R1, =0x00000000
+	STR R1, [GPIO_O, #GPIO_DOUT]
+
+	// Select Port C to be the external interrupt port.
+	// Ensures that inputs from port C will be used to generate interrupts
 	LDR R7, =0x22222222
 	STR R7, [GPIO, #GPIO_EXTIPSELL]
 
+	// Enable Falling Edge Triggering for External Interrupts
 	LDR R7, =0xFF
 	//STR R7, [GPIO, #GPIO_EXTIRISE]
 	STR R7, [GPIO, #GPIO_EXTIFALL]
-	STR R7, [GPIO, #GPIO_IEN]
+	STR R7, [GPIO, #GPIO_IEN] // Enable Interrupts on all button pins
 
-	LDR R7, =0x802
+	// 0x802 == 0b0000100000000010
+	// Selects interrupt lines 1 and 11 (IRQ_GPIO_EVEN and IRQ_GPIO_ODD) to enable interrupts
+	LDR R7, =0x802 
 	LDR R8, =ISER0
 	STR R7, [R8]	
 
+	// Enable Deep Sleep and Return to Sleep after handled interrupt
 	LDR R7, =0x6
 	LDR R8, =SCR
 	STR R7, [R8]

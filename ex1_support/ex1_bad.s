@@ -4,8 +4,8 @@
 
 	/////////////////////////////////////////////////////////////////////////////
 	//
-  // Exception vector table
-  // This table contains addresses for all exception handlers
+	// Exception vector table
+	// This table contains addresses for all exception handlers
 	//
 	/////////////////////////////////////////////////////////////////////////////
 	
@@ -78,9 +78,10 @@
 	//
 	/////////////////////////////////////////////////////////////////////////////
 
-	      .globl  _reset
-	      .type   _reset, %function
-        .thumb_func
+	.globl  _reset
+	.type   _reset, %function
+
+.thumb_func
 _reset: 
 	// Set up aliases for constant-valued registers
 	GPIO_O .req R4
@@ -99,18 +100,18 @@ _reset:
 	ORR R7, R7, R8
 	STR R7, [R9, #CMU_HFPERCLKEN0]
 
-	LDR R7, =0x2
+	
+	// Set Drive Mode to LOWEST on output port (EFM32GG Ref. Manual 32.5.1)
+	LDR R7, =0x1
 	STR R7, [GPIO, #GPIO_CTRL]
 
-	// Low drive strength
+	// Push-pull output with drive strength set by DRIVEMODE
+	// DRIVEMODE is set directly above
 	LDR R7, =0x55555555
 	STR R7, [GPIO_O, #GPIO_MODEH]
-
-	//BL led_test
-	LDR R7, =0x5555
-	STR R7, [GPIO_O, #GPIO_DOUTSET]
-
-	// Set port C 0-7 to input
+	
+	// Set port C 0-7 to input with filter.
+	// Pull direction is set just below
 	LDR R7, =0x33333333
 	STR R7, [GPIO_I, #GPIO_MODEL]
 
@@ -123,7 +124,6 @@ _reset:
 	
 	// R0 used for last input from buttons
 	MOV R0, 0x0
-	B main
 
 .thumb_func
 main:
@@ -232,9 +232,9 @@ set_highest_drivestrength:
 	
 gpio_handler_write:	
 	MVN R0, R7	
-
 	STR R1,[GPIO_O, #GPIO_DOUT]
 	
+	// Return to top of main loop
 	B main
 
 
