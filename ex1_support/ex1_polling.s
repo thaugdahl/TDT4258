@@ -1,13 +1,11 @@
-
-
         .syntax unified
 	
 	      .include "efm32gg.s"
 
 	/////////////////////////////////////////////////////////////////////////////
 	//
-  // Exception vector table
-  // This table contains addresses for all exception handlers
+	// Exception vector table
+	// This table contains addresses for all exception handlers
 	//
 	/////////////////////////////////////////////////////////////////////////////
 	
@@ -80,9 +78,10 @@
 	//
 	/////////////////////////////////////////////////////////////////////////////
 
-	      .globl  _reset
-	      .type   _reset, %function
-        .thumb_func
+	.globl  _reset
+	.type   _reset, %function
+
+.thumb_func
 _reset: 
 	// Set up aliases for constant-valued registers
 	GPIO_O .req R4
@@ -101,15 +100,18 @@ _reset:
 	ORR R7, R7, R8
 	STR R7, [R9, #CMU_HFPERCLKEN0]
 
-	// Low drive strength
+	
+	// Set Drive Mode to LOWEST on output port (EFM32GG Ref. Manual 32.5.1)
+	LDR R7, =0x1
+	STR R7, [GPIO, #GPIO_CTRL]
+
+	// Push-pull output with drive strength set by DRIVEMODE
+	// DRIVEMODE is set directly above
 	LDR R7, =0x55555555
 	STR R7, [GPIO_O, #GPIO_MODEH]
-
-	//BL led_test
-	LDR R7, =0x5555
-	STR R7, [GPIO_O, #GPIO_DOUTSET]
-
-	// Set port C 0-7 to input
+	
+	// Set port C 0-7 to input with filter.
+	// Pull direction is set just below
 	LDR R7, =0x33333333
 	STR R7, [GPIO_I, #GPIO_MODEL]
 
@@ -117,16 +119,32 @@ _reset:
 	LDR R7, =0xFF
 	STR R7, [GPIO_I, #GPIO_DOUT]
 
-	B gpio_handler
+	LDR R7, =0xFFFFFFFF
+	STR R7, [GPIO_O, #GPIO_DOUT]
+	
+	// R0 used for last input from buttons
+	MOV R0, 0x0
 
 .thumb_func
 main:
+	// R7: Newest input, R0: Old input, R1: Current output, R2: Contains 1 if new input has changed to 1, R3: contains 1 if button is pressed
 	LDR R7, [GPIO_I, #GPIO_DIN]
-	LSL R7, R7, #8
-	STR R7,[GPIO_O, #GPIO_DOUT]
+	AND R3, R7, R0
+	ORR R2, R7, R0
+	CBZ R3, skip
+	MVN R0, R7
+skip:
+	MVN R2, R2
+	CMP R2, 0x0
+
+	BEQ main
+
+	CBZ R7, ret_to_main
+	B gpio_handler
+	
+.thumb_func
+ret_to_main:
 	B main
-
-
 	
 	/////////////////////////////////////////////////////////////////////////////
 	//
@@ -137,9 +155,89 @@ main:
 	
         .thumb_func
 gpio_handler:  
-	B .
+	AND R3, R2, 0x1	//Check SW1 (left on left keypad) is pressed
+	CBZ R3, turn_on_led
 
+	//rotate_left()
+	ROR R1, 0x1
+
+turn_on_led:
+	AND R3, R2, 0x2	//Check SW2 (up on left keypad) is pressed
+	CBZ R3, rotate_right
+
+	LDR R8, =0xFEFEFEFE
 		
+	AND R1, R1, R8
+	
+rotate_right:
+	AND R3, R2, 0x4	//Check SW3 (right on left keypad) is pressed
+	CBZ R3, turn_off_led
+	
+	//rotate_right()
+	ROR R1, 0x1F
+	
+turn_off_led:
+	AND R3, R2, 0x8	//Check SW4 (down on left keypad) is pressed
+	CBZ R3, invert
+
+	LDR R8, =0x01010101
+
+	ORR R1, R1, R8
+	
+invert:
+	AND R3, R2, 0x10	//Check SW5 (left on right keypad) is pressed
+	CBZ R3, turn_on_all_led
+	
+	MVN R1, R1
+	
+turn_on_all_led:
+	AND R3, R2, 0x20	//Check SW6 (up on right keypad) is pressed
+	CBZ R3, turn_off_all_led
+	
+	LDR R1, =0x00000000
+
+turn_off_all_led:
+	//Check SW8 (down on right keypad) is pressed
+	AND R3, R2, 0x80	
+	// If not, check next
+	CBZ R3, toggle_drive_strength
+	
+	LDR R1, =0xFFFFFFFF
+
+.thumb_func
+toggle_drive_strength:
+	// Check SW7 (Right on right keypad) is pressed
+	AND R3, R2, 0x40 	
+	// If not, check next
+	CBZ R3, gpio_handler_write
+	
+	// Check current drive strength
+	LDR R8, [GPIO_O, GPIO_CTRL]	
+	AND R3, R8, 0x2
+	
+	// If low, set high, else - fall through
+	CBZ R3, set_highest_drivestrength
+
+
+.thumb_func
+set_lowest_drivestrength:
+	MOV R3, 0x1
+	STR R3, [GPIO_O, #GPIO_CTRL]
+	B gpio_handler_write
+
+.thumb_func
+set_highest_drivestrength:
+	MOV R3, 0x2
+	STR R3, [GPIO_O, #GPIO_CTRL]
+	
+gpio_handler_write:	
+	MVN R0, R7	
+	STR R1,[GPIO_O, #GPIO_DOUT]
+	
+	// Return to top of main loop
+	B main
+
+
 	/////////////////////////////////////////////////////////////////////////////
         .thumb_func
 dummy_handler:  
