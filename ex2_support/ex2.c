@@ -21,6 +21,7 @@
 void setupTimer(uint16_t period);
 void setupDAC();
 void setupNVIC();
+void setupGPIO();
 
 /**
  * Your code will start executing here 
