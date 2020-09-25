@@ -18,10 +18,10 @@ void setupDAC()
 	 * 0 - reserved
 	 * 0 - 2 MSB reserved, 2 LSB - REFSEL = 0 (Internal 1.25 V bandgap reference)
 	 * 1 - OUTMODE = 1 (PIN - DAC output to pin enabled. DAC output to ADC and ACMP disabled)
-	 * 2 - SINEMODE enabled
+	 * 0 - SINEMODE disabled
 	*/
 	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_DAC0;
-	*DAC0_CTRL = 0x50012;
+	*DAC0_CTRL = 0x50010;
 	*DAC0_CH0CTRL = 0x1;
 	*DAC0_CH1CTRL = 0x1;
 }
