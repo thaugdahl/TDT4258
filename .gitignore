@@ -52,7 +52,7 @@ Mkfile.old
 dkms.conf
 
 # Vim backup files
-*.*~
+*~
 *.swp
 
 # Specifics
