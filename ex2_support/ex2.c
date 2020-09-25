@@ -45,7 +45,7 @@ int main(void)
 	 * interrupts instead of infinite loop for busy-waiting 
 	 */
 	while (1){
-		*GPIO_PA_DOUT = (*GPIO_PC_DIN << 8)
+		*GPIO_PA_DOUT = (*GPIO_PC_DIN << 8);
 	} ;
 
 	return 0;
