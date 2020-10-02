@@ -5,15 +5,12 @@
 #include "timer.h"
 
 
-void startTimer();
-void stopTimer();
-
 /**
 * function to setup the timer
 * @param period 
 * 
 */
-void setupTimer(uint16_t period)
+void setupTimer(uint16_t period, uint8_t prescaler)
 {
 	/**
 	 * TODO enable and set up the timer
@@ -32,15 +29,40 @@ void setupTimer(uint16_t period)
 	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER1;
 	// set timer 1 top
 	*TIMER1_TOP = period;
+
+	*TIMER1_CTRL |= (prescaler << 24);
+}
+
+void setSamplingFrequency(uint32_t frequency)
+{
+	// NOT CURRENTLY WORKING! Fix it or don't use it. Not necessary as of now, and should probably be deleted 
+	uint32_t top;
+	uint32_t prescaler = 0;
+	bool prescaler_found;
+
+	while(prescaler_found == 0)
+	{
+		top = 14000000 / (frequency * 2^(1+prescaler)	);
+		if(top <= 0xFFFF)
+		{
+			prescaler_found = 1;
+		}
+		else
+		{
+			prescaler_found = 0;
+			prescaler += 1;
+		}
+	}
+	
+	setupTimer(top, prescaler);
+
+}
+
+void enableTimerInterrupt()
+{
 	// enable timer 1 interrupt
 	*TIMER1_IEN |= 1;
-
-    *TIMER1_CTRL |= 1 << 27;
-
-    *TIMER1_CTRL &= 0xFFFFFFE;
-
-
-	startTimer();
+	
 }
 
 void startTimer()
@@ -54,4 +76,3 @@ void stopTimer()
 	// stop timer 1
 	*TIMER1_CMD = 2;
 }
-

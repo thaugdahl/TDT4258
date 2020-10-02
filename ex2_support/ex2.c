@@ -5,6 +5,7 @@
 #include "gpio.h"
 #include "timer.h"
 #include "dac.h"
+#include "interrupt_handlers.h"
 
 /**
  * TODO calculate the appropriate sample period for the sound wave(s) you 
@@ -15,7 +16,11 @@
 /**
  * The period between sound samples, in clock cycles 
  */
-#define   SAMPLE_PERIOD   3500
+#define  SAMPLE_PERIOD		106	// Combined with a prescaler of 1, will result in ~32768 kHz
+#define  SAMPLE_PRESCALER	1
+
+//#define  SAMPLE_PERIOD		54686	// Combined with a prescaler of 8, will result in ~1 Hz
+//#define  SAMPLE_PRESCALER	8
 
 /**
  * Declaration of peripheral setup functions 
@@ -33,21 +38,22 @@ int main(void)
 	 */
 	setupGPIO();
 	setupDAC();
-	setupTimer(SAMPLE_PERIOD);
+	setupTimer(SAMPLE_PERIOD, SAMPLE_PRESCALER);
 
 	/**
 	 * Enable interrupt handling 
 	 */
 	setupNVIC();
 
-    *GPIO_PA_DOUT = 0xFFFF;
+	//startTimer();	// Moved to GPIO interrupt_handler, so we can shut off that fucking sound
 
 	/**
 	 * TODO for higher energy efficiency, sleep while waiting for
 	 * interrupts instead of infinite loop for busy-waiting 
 	 */
 	while (1) {
-		//*GPIO_PA_DOUT = (*GPIO_PC_DIN << 8);
+//		*GPIO_PA_DOUT = (*GPIO_PC_DIN << 8);
+		
 	}
 
 	return 0;
@@ -64,9 +70,10 @@ void setupNVIC()
 	 * assignment. 
 	 */
 
-     *ISER0 = 0x1802; // Bits 2, 11 and 12 for their corresponding IRQ# channels
-     *GPIO_IEN = 0xFF;
-     *GPIO_EXTIFALL = 0xFF;
+	enableTimerInterrupt();
+	enableGPIOInterrupt();
+
+	*ISER0 |= 0x1802;	// Bits 2, 11 and 12 for their corresponding IRQ# channels
 }
 
 /**
