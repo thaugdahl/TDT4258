@@ -31,7 +31,17 @@ void setupDAC()
 }
 
 /**TODO: finish comment
- * 
+ * Frequencies: 
+ * 0 = 64*2^0 Hz =    32 Hz
+ * 1 = 64*2^0 Hz =    64 Hz
+ * 2 = 64*2^1 Hz =   128 Hz
+ * 3 = 64*2^2 Hz =   256 Hz
+ * 4 = 64*2^3 Hz =   512 Hz
+ * 5 = 64*2^4 Hz =  1024 Hz
+ * 6 = 64*2^5 Hz =  2048 Hz
+ * 7 = 64*2^6 Hz =  4096 Hz
+ * 8 = 64*2^7 Hz =  8192 Hz
+ * 9 = 64*2^0 Hz = 16384 Hz
 */
 int period;
 int set_freq(int frequency){
@@ -45,7 +55,7 @@ int set_freq(int frequency){
  * timer interrupt will call this function
 */
 void advance_sine(){
-	i += i*freq % 256;
-	*DAC0_CH0DATA = sinewave[i*freq];
-	*DAC0_CH1DATA = sinewave[i*freq];
+	i++;
+	*DAC0_CH0DATA = sinewave[i<<freq&1023];
+	*DAC0_CH1DATA = sinewave[i<<freq&1023];
 }
