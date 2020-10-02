@@ -9,7 +9,7 @@
 * @param period 
 * 
 */
-void setupTimer(uint16_t period, bool use_interrupt)
+void setupTimer(uint16_t period)
 {
 	/**
 	 * TODO enable and set up the timer
@@ -30,6 +30,19 @@ void setupTimer(uint16_t period, bool use_interrupt)
 	*TIMER1_TOP = period;			
 	// enable timer 1 interrupt 
 	*TIMER1_IEN |= 1;
+
+	startTimer();
+}
+
+void startTimer(void)
+{
 	// start timer 1
 	*TIMER1_CMD |= 1;
 }
+
+void stopTimer(void)
+{
+	// stop timer 1
+	*TIMER1_CMD &= FFFE;
+}
+
