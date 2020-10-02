@@ -57,3 +57,4 @@ dkms.conf
 
 # Specifics
 
+!ex2_support/lib/libefm32gg.a
