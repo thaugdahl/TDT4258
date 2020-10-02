@@ -2,6 +2,9 @@
 #include <stdbool.h>
 
 #include "efm32gg.h"
+#include "gpio.h"
+#include "timer.h"
+#include "dac.h"
 
 /**
  * TODO calculate the appropriate sample period for the sound wave(s) you 
@@ -12,16 +15,13 @@
 /**
  * The period between sound samples, in clock cycles 
  */
-#define   SAMPLE_PERIOD   145
+#define   SAMPLE_PERIOD   3500
 
 /**
  * Declaration of peripheral setup functions 
  */
 
-void setupTimer(uint16_t period);
-void setupDAC();
 void setupNVIC();
-void setupGPIO();
 
 /**
  * Your code will start executing here 
@@ -40,12 +40,14 @@ int main(void)
 	 */
 	setupNVIC();
 
+    *GPIO_PA_DOUT = 0xFFFF;
+
 	/**
 	 * TODO for higher energy efficiency, sleep while waiting for
 	 * interrupts instead of infinite loop for busy-waiting 
 	 */
 	while (1) {
-		*GPIO_PA_DOUT = (*GPIO_PC_DIN << 8);
+		//*GPIO_PA_DOUT = (*GPIO_PC_DIN << 8);
 	}
 
 	return 0;
@@ -61,6 +63,10 @@ void setupNVIC()
 	 * need TIMER1, GPIO odd and GPIO even interrupt handling for this
 	 * assignment. 
 	 */
+
+     *ISER0 = 0x1802; // Bits 2, 11 and 12 for their corresponding IRQ# channels
+     *GPIO_IEN = 0xFF;
+     *GPIO_EXTIFALL = 0xFF;
 }
 
 /**

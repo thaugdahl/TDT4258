@@ -2,6 +2,7 @@
 #include <stdbool.h>
 
 #include "efm32gg.h"
+#include "timer.h"
 
 
 void startTimer();
@@ -30,9 +31,14 @@ void setupTimer(uint16_t period)
 	// enable timer 1 clock
 	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER1;
 	// set timer 1 top
-	*TIMER1_TOP = period;			
-	// enable timer 1 interrupt 
+	*TIMER1_TOP = period;
+	// enable timer 1 interrupt
 	*TIMER1_IEN |= 1;
+
+    *TIMER1_CTRL |= 1 << 27;
+
+    *TIMER1_CTRL &= 0xFFFFFFE;
+
 
 	startTimer();
 }
@@ -40,12 +46,12 @@ void setupTimer(uint16_t period)
 void startTimer()
 {
 	// start timer 1
-	*TIMER1_CMD |= 1;
+	*TIMER1_CMD = 1;
 }
 
 void stopTimer()
 {
 	// stop timer 1
-	*TIMER1_CMD &= 0xFFFE;
+	*TIMER1_CMD = 2;
 }
 

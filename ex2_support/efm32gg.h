@@ -63,6 +63,7 @@
 
 #define TIMER1_BASE 0x40010400
 
+#define TIMER1_CTRL ((volatile uint32_t*)(TIMER1_BASE + 0x00))
 #define TIMER1_CMD ((volatile uint32_t*)(TIMER1_BASE + 0x04))
 #define TIMER1_IEN ((volatile uint32_t*)(TIMER1_BASE + 0x0c))
 #define TIMER1_IFC ((volatile uint32_t*)(TIMER1_BASE + 0x18))
