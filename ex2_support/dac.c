@@ -34,7 +34,7 @@ void setupDAC()
  * 
 */
 int period;
-void set_freq(int frequency){
+int set_freq(int frequency){
 	if ((frequency < 0) || (frequency > 8)){
 		return -1;
 	}

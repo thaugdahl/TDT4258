@@ -14,8 +14,8 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 	 * by writing 1 to TIMER1_IFC 
 	 */
 	
-	TIMER_IFC |= 1;
-	advance_sine();
+	*TIMER1_IFC |= 1;
+	//advance_sine();
 }
 
 /**

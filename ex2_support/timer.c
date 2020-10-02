@@ -4,6 +4,9 @@
 #include "efm32gg.h"
 
 
+void startTimer();
+void stopTimer();
+
 /**
 * function to setup the timer
 * @param period 
@@ -34,15 +37,15 @@ void setupTimer(uint16_t period)
 	startTimer();
 }
 
-void startTimer(void)
+void startTimer()
 {
 	// start timer 1
 	*TIMER1_CMD |= 1;
 }
 
-void stopTimer(void)
+void stopTimer()
 {
 	// stop timer 1
-	*TIMER1_CMD &= FFFE;
+	*TIMER1_CMD &= 0xFFFE;
 }
 
