@@ -45,7 +45,7 @@ void set_freq(int frequency){
  * timer interrupt will call this function
 */
 void advance_sine(){
-	i = ++i % 256;
+	i += i*freq % 256;
 	*DAC0_CH0DATA = sinewave[i*freq];
 	*DAC0_CH1DATA = sinewave[i*freq];
 }
