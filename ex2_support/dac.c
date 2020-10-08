@@ -3,9 +3,10 @@
 
 #include "efm32gg.h"
 #include "sounds.h"
+#include "utils.h"
 
-int freq = 1;
-int i = 0;
+static int freq = 1;
+static int i = 0;
 
 void setupDAC()
 {
@@ -43,13 +44,10 @@ void setupDAC()
  * 8 = 64*2^7 Hz =  8192 Hz
  * 9 = 64*2^0 Hz = 16384 Hz
 */
-int period;
+//int period;
 int set_freq(int frequency)
 {
-	if ((frequency < 0) || (frequency > 8)) {
-		return -1;
-	}
-	freq = (1 << frequency);
+	freq = clamp(frequency, 0, 9);
 	return 0;
 }
 
@@ -58,14 +56,14 @@ int set_freq(int frequency)
 */
 void advance_sine()
 {
-	 *DAC0_CH0DATA = sinewave[i];
+	 /**DAC0_CH0DATA = sinewave[i];
 	 *DAC0_CH1DATA = sinewave[i];
-	 i = (i + freq) % 256;
-/*
+	 i = (i + freq) % 1024; */
+
+    //int tmp_index = i << freq & 1023;
 	i++;
 	*DAC0_CH0DATA = sinewave[i << freq & 1023];
 	*DAC0_CH1DATA = sinewave[i << freq & 1023];
 
 	i &= 1023;
-*/
 }
