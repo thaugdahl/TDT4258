@@ -7,6 +7,7 @@
 
 static int freq = 1;
 static int i = 0;
+static int volume = 4;
 
 void setupDAC()
 {
@@ -62,8 +63,10 @@ void advance_sine()
 
     //int tmp_index = i << freq & 1023;
 	i++;
-	*DAC0_CH0DATA = sinewave[i << freq & 1023];
-	*DAC0_CH1DATA = sinewave[i << freq & 1023];
+    i%=111;
 
-	i &= 1023;
+    int index = i << freq % 111;
+	*DAC0_CH0DATA = sinewave[index] << volume;
+	*DAC0_CH1DATA = sinewave[index] << volume;
+
 }

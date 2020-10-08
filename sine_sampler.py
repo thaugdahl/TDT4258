@@ -1,31 +1,29 @@
-from math import sin, pi 
+from math import cos, pi 
 
 def sine_sample(freq):
-    mult = 4096
+    mult = 255
 
     # 32 768 Hz Sample Rate
 
     # Sine wave at 1 Hz -> sin(2*Pi*x)
 
-    samplerate = 48*10e3
+    samplerate = 48e3
 
-    x = 0
+    x = 0 
     
-    samples = [0]
+    samples = [cos(0)]
     
     val = -1 
-    while x < 1 and not -0.1 < val < 0.1 :
-        x += 1/freq
-        val = mult*sin(2*pi*x)
-        print(x)
+    while x < 1/freq:
+        x += 1/samplerate
+        val = (mult/2)*(cos(2*pi*x*freq) + 1)
         samples.append(round(val))
-
     return samples
 
 
 def main():
 
-    samples = sine_sample(32.076)
+    samples = sine_sample(440)
 
     print(samples)
 
