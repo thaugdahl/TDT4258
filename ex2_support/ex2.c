@@ -15,7 +15,10 @@
  */
 /**
  * The period between sound samples, in clock cycles 
+ * Sampling frequency can be calculated as following:
+ * F_s = F_clk/ (2^(SAMPLE_PRESCALER)x(SAMPLE_PERIOD+1)) 
  */
+
 #define  SAMPLE_PERIOD		106	// Combined with a prescaler of 1, will result in ~32768 kHz
 #define  SAMPLE_PRESCALER	2
 
