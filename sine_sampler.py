@@ -14,10 +14,10 @@ def sine_sample(freq):
     samples = [0]
     
     val = -1 
-    while val != 0:
-        x += 1/mult
+    while x < 1 and not -0.1 < val < 0.1 :
+        x += 1/freq
         val = mult*sin(2*pi*x)
-        print(val)
+        print(x)
         samples.append(round(val))
 
     return samples
