@@ -17,7 +17,7 @@
  * The period between sound samples, in clock cycles 
  */
 #define  SAMPLE_PERIOD		106	// Combined with a prescaler of 1, will result in ~32768 kHz
-#define  SAMPLE_PRESCALER	1
+#define  SAMPLE_PRESCALER	2
 
 //#define  SAMPLE_PERIOD		54686	// Combined with a prescaler of 8, will result in ~1 Hz
 //#define  SAMPLE_PRESCALER	8

@@ -42,7 +42,7 @@ void setSamplingFrequency(uint32_t frequency)
 
 	while(prescaler_found == 0)
 	{
-		top = 14000000 / (frequency * 2^(1+prescaler)	);
+		top = 14000000 / (frequency * 2^(prescaler)	);
 		if(top <= 0xFFFF)
 		{
 			prescaler_found = 1;
