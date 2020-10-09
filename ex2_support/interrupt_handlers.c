@@ -42,7 +42,7 @@ void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler()
 
 	*GPIO_IFC = 0x55;
 	*GPIO_PA_DOUT = *GPIO_PC_DIN << 8;
-	startTimer();
+	startSamplingTimer();
 
 }
 
@@ -58,5 +58,5 @@ void __attribute__ ((interrupt)) GPIO_ODD_IRQHandler()
 
 	*GPIO_IFC = 0xAA;
 	*GPIO_PA_DOUT = *GPIO_PC_DIN << 8;
-	stopTimer();
+	stopSamplingTimer();
 }

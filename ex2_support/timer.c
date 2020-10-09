@@ -10,7 +10,7 @@
 * @param period 
 * 
 */
-void setupTimer(uint16_t period, uint8_t prescaler)
+void setupSamplingTimer(uint16_t period, uint8_t prescaler)
 {
 	/**
 	 * TODO enable and set up the timer
@@ -54,24 +54,24 @@ void setSamplingFrequency(uint32_t frequency)
 		}
 	}
 	
-	setupTimer(top, prescaler);
+	setupSamplingTimer(top, prescaler);
 
 }
 
-void enableTimerInterrupt()
+void enableSamplingTimerInterrupt()
 {
 	// enable timer 1 interrupt
 	*TIMER1_IEN |= 1;
 	
 }
 
-void startTimer()
+void startSamplingTimer()
 {
 	// start timer 1
 	*TIMER1_CMD = 1;
 }
 
-void stopTimer()
+void stopSamplingTimer()
 {
 	// stop timer 1
 	*TIMER1_CMD = 2;

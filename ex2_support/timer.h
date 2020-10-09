@@ -2,10 +2,10 @@
 #define TIMER_H
 
 #include <stdint.h>
-void setupTimer(uint16_t period, uint8_t prescaler);
+void setupSamplingTimer(uint16_t period, uint8_t prescaler);
 void setSamplingFrequency(uint32_t frequency);
-void enableTimerInterrupt();
-void startTimer();
-void stopTimer();
+void enableSamplingTimerInterrupt();
+void startSamplingTimer();
+void stopSamplingTimer();
 
 #endif

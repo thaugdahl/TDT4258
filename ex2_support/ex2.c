@@ -41,7 +41,7 @@ int main(void)
 	 */
 	setupGPIO();
 	setupDAC();
-	setupTimer(SAMPLE_PERIOD, SAMPLE_PRESCALER);
+	setupSamplingTimer(SAMPLE_PERIOD, SAMPLE_PRESCALER);
 
 	/**
 	 * Enable interrupt handling 
@@ -73,7 +73,7 @@ void setupNVIC()
 	 * assignment. 
 	 */
 
-	enableTimerInterrupt();
+	enableSamplingTimerInterrupt();
 	enableGPIOInterrupt();
 
 	*ISER0 |= 0x1802;	// Bits 2, 11 and 12 for their corresponding IRQ# channels
