@@ -85,6 +85,10 @@
 #define TIMER1_TOP  ((volatile uint32_t*)(TIMER1_BASE + 0x1c))
 #define TIMER1_CNT  ((volatile uint32_t*)(TIMER1_BASE + 0x24))
 
+#define TIMER1_CMD_START        (1 << 0)
+#define TIMER1_CMD_STOP         (1 << 1)
+
+
 #define TIMER2_BASE 0x40010800
 
 #define TIMER2_CTRL ((volatile uint32_t*)(TIMER2_BASE + 0x00))
@@ -94,8 +98,8 @@
 #define TIMER2_TOP  ((volatile uint32_t*)(TIMER2_BASE + 0x1c))
 #define TIMER2_CNT  ((volatile uint32_t*)(TIMER2_BASE + 0x24))
 
-#define TIMER1_CMD_START        (1 << 0)
-#define TIMER1_CMD_STOP         (1 << 1)
+#define TIMER2_CMD_START        (1 << 0)
+#define TIMER2_CMD_STOP         (1 << 1)
 
 // LETIMER0
 
