@@ -41,21 +41,21 @@ int main(void)
 	 */
 	setupGPIO();
 	setupDAC();
-	setupTimer(SAMPLE_PERIOD, SAMPLE_PRESCALER);
+	setupSamplingTimer(SAMPLE_PERIOD, SAMPLE_PRESCALER);
+	setupSemiquaverTimer();
 
 	/**
 	 * Enable interrupt handling 
 	 */
 	setupNVIC();
 
-	//startTimer();	// Moved to GPIO interrupt_handler, so we can shut off that fucking sound
 
+	
 	/**
 	 * TODO for higher energy efficiency, sleep while waiting for
 	 * interrupts instead of infinite loop for busy-waiting 
 	 */
 	while (1) {
-//		*GPIO_PA_DOUT = (*GPIO_PC_DIN << 8);
 		
 	}
 
@@ -73,10 +73,13 @@ void setupNVIC()
 	 * assignment. 
 	 */
 
-	enableTimerInterrupt();
+	enableTimerInterrupts();
 	enableGPIOInterrupt();
 
-	*ISER0 |= 0x1802;	// Bits 2, 11 and 12 for their corresponding IRQ# channels
+	// Bits 2 (GPIO_EVEN), 11 (GPIO_ODD), 
+	// 12(TIMER1) and 26(LETIMER0),
+	// for their corresponding IRQ# channels
+	*ISER0 |= 0x4001802;	 
 }
 
 /**

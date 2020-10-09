@@ -1,3 +1,8 @@
+#ifndef EFM32GG_H // Header Guard
+#define EFM32GG_H
+
+
+
 #include <stdint.h>
 
 // GPIO
@@ -52,23 +57,49 @@
 #define CMU_HFPERCLKEN0  ((volatile uint32_t*)(CMU_BASE2 + 0x044))
 #define CMU_CMD          ((volatile uint32_t*)(CMU_BASE2 + 0x024))
 
+#define CMU_LFCLKSEL  ((volatile uint32_t*)(CMU_BASE2 + 0x028))
+
 #define CMU2_HFPERCLKEN0_DAC0   (1 << 17)
 #define CMU2_HFPERCLKEN0_PRS    (1 << 15)
 #define CMU2_HFPERCLKEN0_GPIO   (1 << 13)
 #define CMU2_HFPERCLKEN0_TIMER1 (1 << 6)
 
-#define CMU_HFCORECLKEN0_DMA (1 << 0)
+#define CMU_HFCORECLKEN0_DMA    (1 << 0)
+
+#define CMU_LFACLKEN0 ((volatile uint32_t*)(CMU_BASE2 + 0x058))
+#define CMU_LFACLKEN0_LETIMER0  (1 << 2)
+
+#define CMU_LFCLKSEL_LFA        (1 << 0)
+#define CMU_LFCLKSEL_LFAE       (1 << 16)
 
 // TIMER1
 
 #define TIMER1_BASE 0x40010400
 
 #define TIMER1_CTRL ((volatile uint32_t*)(TIMER1_BASE + 0x00))
-#define TIMER1_CMD ((volatile uint32_t*)(TIMER1_BASE + 0x04))
-#define TIMER1_IEN ((volatile uint32_t*)(TIMER1_BASE + 0x0c))
-#define TIMER1_IFC ((volatile uint32_t*)(TIMER1_BASE + 0x18))
-#define TIMER1_TOP ((volatile uint32_t*)(TIMER1_BASE + 0x1c))
-#define TIMER1_CNT ((volatile uint32_t*)(TIMER1_BASE + 0x24))
+#define TIMER1_CMD  ((volatile uint32_t*)(TIMER1_BASE + 0x04))
+#define TIMER1_IEN  ((volatile uint32_t*)(TIMER1_BASE + 0x0c))
+#define TIMER1_IFC  ((volatile uint32_t*)(TIMER1_BASE + 0x18))
+#define TIMER1_TOP  ((volatile uint32_t*)(TIMER1_BASE + 0x1c))
+#define TIMER1_CNT  ((volatile uint32_t*)(TIMER1_BASE + 0x24))
+
+#define TIMER1_CMD_START        (1 << 0)
+#define TIMER1_CMD_STOP         (1 << 1)
+
+// LETIMER0
+
+#define LETIMER0_BASE 0x40082000
+
+#define LETIMER0_CTRL  ((volatile uint32_t*)(LETIMER0_BASE + 0x00))
+#define LETIMER0_CMD   ((volatile uint32_t*)(LETIMER0_BASE + 0x04))
+#define LETIMER0_COMP0 ((volatile uint32_t*)(LETIMER0_BASE + 0x10))
+#define LETIMER0_CNT   ((volatile uint32_t*)(LETIMER0_BASE + 0x0c))
+#define LETIMER0_IEN   ((volatile uint32_t*)(LETIMER0_BASE + 0x2c))
+#define LETIMER0_IFC   ((volatile uint32_t*)(LETIMER0_BASE + 0x28))
+
+#define LETIMER0_CTRL_COMP0     (1 << 9)
+#define LETIMER0_CMD_START      (1 << 0)
+#define LETIMER0_CMD_STOP       (1 << 1)
 
 // NVIC
 
@@ -141,3 +172,5 @@
 #define SCR          ((volatile uint32_t*)0xe000ed10)
 #define SYSTICK_CTRL ((volatile uint32_t*)0xe000e010)
 #define SYSTICK_LOAD ((volatile uint32_t*)0xe000e014)
+
+#endif // Header Guard

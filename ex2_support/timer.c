@@ -10,7 +10,7 @@
 * @param period 
 * 
 */
-void setupTimer(uint16_t period, uint8_t prescaler)
+void setupSamplingTimer(uint16_t period, uint8_t prescaler)
 {
 	/**
 	 * TODO enable and set up the timer
@@ -38,7 +38,7 @@ void setSamplingFrequency(uint32_t frequency)
 	// NOT CURRENTLY WORKING! Fix it or don't use it. Not necessary as of now, and should probably be deleted 
 	uint32_t top;
 	uint32_t prescaler = 0;
-	bool prescaler_found;
+	uint8_t prescaler_found;
 
 	while(prescaler_found == 0)
 	{
@@ -54,25 +54,73 @@ void setSamplingFrequency(uint32_t frequency)
 		}
 	}
 	
-	setupTimer(top, prescaler);
+	setupSamplingTimer(top, prescaler);
 
 }
 
-void enableTimerInterrupt()
+
+
+/**
+* function to start the timer
+* 
+*/
+void startSamplingTimer()
+{
+	// start timer 1, which enables pushing data to DAC
+	*TIMER1_CMD = TIMER1_CMD_START;
+}
+
+/**
+* function to stop the timer
+* 
+*/
+void stopSamplingTimer()
+{
+	// stop timer 1, which disables pushing data to DAC
+	*TIMER1_CMD = TIMER1_CMD_STOP;
+}
+
+
+
+void setupSemiquaverTimer()
+{
+	// enable low energy timer 0 clock
+	*CMU_LFACLKEN0 |= CMU_LFACLKEN0_LETIMER0;
+
+	// set timer 0 top
+	*LETIMER0_CTRL |= LETIMER0_CTRL_COMP0; 	//TOP = LETIMER0_COMP0
+    *LETIMER0_COMP0 |= 124; 				//TOP = 124 => 8 Hz, 125 ms period
+
+	// Use 1kHz clock
+	*CMU_LFCLKSEL |= CMU_LFCLKSEL_LFAE;
+	*CMU_LFCLKSEL &= 0xFFFFFFFC; //clear CMU_LFCLKSEL_LFA
+}
+
+/**
+* function to start the timer
+* 
+*/
+void startSemiquaverTimer()
+{
+	// start timer 0, which enables playing a sound
+	*LETIMER0_CMD |= LETIMER0_CMD_START;
+}
+
+/**
+* function to stop the timer
+* 
+*/
+void stopSemiquaverTimer()
+{
+	// stop timer 0, which disables playing a sound
+	*LETIMER0_CMD |= LETIMER0_CMD_STOP;
+}
+
+
+
+void enableTimerInterrupts()
 {
 	// enable timer 1 interrupt
-	*TIMER1_IEN |= 1;
-	
-}
-
-void startTimer()
-{
-	// start timer 1
-	*TIMER1_CMD = 1;
-}
-
-void stopTimer()
-{
-	// stop timer 1
-	*TIMER1_CMD = 2;
+	*TIMER1_IEN 	|= 1;
+	*LETIMER0_IEN 	|= 1;
 }

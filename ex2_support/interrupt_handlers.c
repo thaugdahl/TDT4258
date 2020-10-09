@@ -5,6 +5,7 @@
 #include "dac.h"
 #include "timer.h"
 #include "interrupt_handlers.h"
+#include "music.h"
 
 /**
  * TIMER1 interrupt handler 
@@ -30,6 +31,19 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 */	*TIMER1_IFC |= 1;
 }
 
+void __attribute__ ((interrupt)) LETIMER0_IRQHandler()
+{
+	/**
+	 * TODO feed new samples to the DAC 
+	 * Remember to clear the pending interrupt,
+	 * by writing 1 to LETIMER0_IFC 
+	 */
+
+	advance_music();
+
+	*TIMER1_IFC |= 1;
+}
+
 /**
  * GPIO even pin interrupt handler 
  */
@@ -42,7 +56,7 @@ void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler()
 
 	*GPIO_IFC = 0x55;
 	*GPIO_PA_DOUT = *GPIO_PC_DIN << 8;
-	startTimer();
+	startSamplingTimer();
 
 }
 
@@ -58,5 +72,5 @@ void __attribute__ ((interrupt)) GPIO_ODD_IRQHandler()
 
 	*GPIO_IFC = 0xAA;
 	*GPIO_PA_DOUT = *GPIO_PC_DIN << 8;
-	stopTimer();
+	stopSamplingTimer();
 }

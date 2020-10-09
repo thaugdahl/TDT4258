@@ -2,10 +2,14 @@
 #define TIMER_H
 
 #include <stdint.h>
-void setupTimer(uint16_t period, uint8_t prescaler);
+void setupSamplingTimer(uint16_t period, uint8_t prescaler);
 void setSamplingFrequency(uint32_t frequency);
-void enableTimerInterrupt();
-void startTimer();
-void stopTimer();
+void startSamplingTimer();
+void stopSamplingTimer();
+void setupSemiquaverTimer();
+void startSemiquaverTimer();
+void stopSemiquaverTimer();
+void samplingTimer_setTop(uint32_t top);
 
+void enableTimerInterrupts();
 #endif
