@@ -23,6 +23,7 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 
 	*TIMER1_IFC |= 1;
 }
+static int counter = 0;
 
 void __attribute__ ((interrupt)) TIMER2_IRQHandler()
 {
@@ -32,8 +33,9 @@ void __attribute__ ((interrupt)) TIMER2_IRQHandler()
 	 * by writing 1 to LETIMER0_IFC 
 	 */
 
-	advance_music();
-	*GPIO_PA_DOUT ^= 0xAA;
+	//advance_music();
+	counter++;
+	*GPIO_PA_DOUT ^= counter;
 	*TIMER2_IFC |= 0x1;
 }
 

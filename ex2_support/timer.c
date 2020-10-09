@@ -100,7 +100,7 @@ void setupSemiquaverTimer()
 	// enable timer 2 clock
 	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER2;
 	// set timer 2 top
-	*TIMER2_TOP = 6835; // TOP=6835 54680
+	*TIMER2_TOP = 54680; // TOP=6835  --  54680
 
 	*TIMER2_CTRL |= (8 << 24); //prescaler = 8
 }
@@ -124,7 +124,7 @@ void stopSemiquaverTimer()
 {
 	// stop timer 0, which disables playing a sound
 	//*LETIMER0_CMD |= LETIMER0_CMD_STOP;
-	*TIMER1_CMD = TIMER1_CMD_STOP// 0x6;	//;
+	*TIMER1_CMD = TIMER1_CMD_STOP;// 0x6; 
 }
 
 
