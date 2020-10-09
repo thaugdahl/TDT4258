@@ -58,21 +58,63 @@ void setSamplingFrequency(uint32_t frequency)
 
 }
 
-void enableSamplingTimerInterrupt()
-{
-	// enable timer 1 interrupt
-	*TIMER1_IEN |= 1;
-	
-}
 
+/**
+* function to start the timer
+* 
+*/
 void startSamplingTimer()
 {
-	// start timer 1
+	// start timer 1, which enables pushing data to DAC
 	*TIMER1_CMD = 1;
 }
 
+/**
+* function to stop the timer
+* 
+*/
 void stopSamplingTimer()
 {
-	// stop timer 1
+	// stop timer 1, which disables pushing data to DAC
 	*TIMER1_CMD = 2;
+}
+
+
+
+void setupSemiquiverTimer(uint16_t period, uint8_t prescaler)
+{
+	// enable timer 0 clock
+	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER0;
+	// set timer 0 top
+	*TIMER0_TOP = period;
+	*TIMER0_CTRL |= (prescaler << 24);
+}
+
+/**
+* function to start the timer
+* 
+*/
+void startSemiquiverTimer()
+{
+	// start timer 0, which enables playing a sound
+	*TIMER0_CMD = 1;
+}
+
+/**
+* function to stop the timer
+* 
+*/
+void stopSemiquiverTimer()
+{
+	// stop timer 0, which disables playing a sound
+	*TIMER0_CMD = 2;
+}
+
+
+
+void enableTimerInterrupts()
+{
+	// enable timer 1 interrupt
+	*TIMER1_IEN |= 1;
+	*TIMER0_IEN |= 1;
 }
