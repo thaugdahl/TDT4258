@@ -81,7 +81,7 @@ void stopSamplingTimer()
 
 
 
-void setupSemiquiverTimer(uint16_t period, uint8_t prescaler)
+void setupSemiquaverTimer(uint16_t period, uint8_t prescaler)
 {
 	// enable timer 0 clock
 	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER0;
@@ -94,7 +94,7 @@ void setupSemiquiverTimer(uint16_t period, uint8_t prescaler)
 * function to start the timer
 * 
 */
-void startSemiquiverTimer()
+void startSemiquaverTimer()
 {
 	// start timer 0, which enables playing a sound
 	*TIMER0_CMD = 1;
@@ -104,7 +104,7 @@ void startSemiquiverTimer()
 * function to stop the timer
 * 
 */
-void stopSemiquiverTimer()
+void stopSemiquaverTimer()
 {
 	// stop timer 0, which disables playing a sound
 	*TIMER0_CMD = 2;
