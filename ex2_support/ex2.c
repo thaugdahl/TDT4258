@@ -19,7 +19,7 @@
  * F_s = F_clk/ (2^(SAMPLE_PRESCALER)x(SAMPLE_PERIOD+1)) 
  */
 
-#define  SAMPLE_PERIOD		4930	// Combined with a prescaler of 1, will result in ~32768 kHz
+#define  SAMPLE_PERIOD		493	// Combined with a prescaler of 1, will result in ~32768 kHz
 #define  SAMPLE_PRESCALER	0
 
 //#define  SAMPLE_PERIOD		54686	// Combined with a prescaler of 8, will result in ~1 Hz
@@ -56,7 +56,9 @@ int main(void)
 	 * TODO for higher energy efficiency, sleep while waiting for
 	 * interrupts instead of infinite loop for busy-waiting 
 	 */
-	
+	*GPIO_PA_DOUT = 0xFFFF;
+	startSemiquaverTimer();
+
 	while (1) {
 		//__asm__ ("wfi");
 	}
