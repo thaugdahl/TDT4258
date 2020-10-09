@@ -124,6 +124,13 @@
 #define ICPR1 ((volatile uint32_t*)0xe000e284)
 #define IABR0 ((volatile uint32_t*)0xe000e300)
 #define IABR1 ((volatile uint32_t*)0xe000e304)
+//Bits 1 (GPIO_EVEN), 11 (GPIO_ODD), 12(TIMER1), 13(TIMER2) and 26(LETIMER0)
+#define ISER0_GPIO_EVEN         (1 << 1)
+#define ISER0_GPIO_ODD          (1 << 11)
+#define ISER0_TIMER1            (1 << 12)
+#define ISER0_TIMER2            (1 << 13)
+#define ISER0_LETIMER0          (1 << 26)
+
 
 // IPR
 

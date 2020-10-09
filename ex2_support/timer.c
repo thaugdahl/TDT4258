@@ -100,7 +100,7 @@ void setupSemiquaverTimer()
 	// enable timer 2 clock
 	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER2;
 	// set timer 2 top
-	*TIMER2_TOP = 6835; // TOP=6835
+	*TIMER2_TOP = 6835; // TOP=6835 54680
 
 	*TIMER2_CTRL |= (8 << 24); //prescaler = 8
 }
@@ -134,5 +134,5 @@ void enableTimerInterrupts()
 	// enable timer 1 interrupt
 	*TIMER1_IEN 	|= 1;
 	*TIMER2_IEN     |= 1;
-	*LETIMER0_IEN 	|= 1;
+	//*LETIMER0_IEN 	|= 1;
 }

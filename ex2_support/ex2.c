@@ -78,9 +78,13 @@ void setupNVIC()
 	enableTimerInterrupts();
 	enableGPIOInterrupt();
 
-	// Bits 1 (GPIO_EVEN), 11 (GPIO_ODD), 12(TIMER1), 13(TIMER2) and 26(LETIMER0),
-	// for their corresponding IRQ# channels
-	*ISER0 |= 0x4003802;	 
+	// Bits 1 (GPIO_EVEN), 11 (GPIO_ODD), 12(TIMER1), 13(TIMER2) and 26(LETIMER0), for their corresponding IRQ# channels
+	*ISER0 |= ISER0_GPIO_EVEN;
+	*ISER0 |= ISER0_GPIO_ODD;
+	*ISER0 |= ISER0_TIMER1;
+	*ISER0 |= ISER0_TIMER2;
+	//*ISER0 |= ISER0_LETIMER0;
+
 }
 
 /**
