@@ -64,7 +64,8 @@ void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler()
 
 	*GPIO_IFC = 0x55;
 	//startSampling
-	start_song(0);
+	startSemiquaverTimer();
+	//start_song(0);
 
 }
 
@@ -80,6 +81,8 @@ void __attribute__ ((interrupt)) GPIO_ODD_IRQHandler()
 
 	*GPIO_IFC = 0xAA;
 	//stopTimer
-	stop_song();
+	stopSemiquaverTimer();
+
+	//stop_song();
 	//Timer();
 }
