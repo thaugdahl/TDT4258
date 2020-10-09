@@ -15,10 +15,10 @@ void setupSamplingTimer(uint16_t period, uint8_t prescaler)
 	/**
 	 * TODO enable and set up the timer
 	 * 
-	 * 1. Enable clock to timer by setting bit 6 in CMU_HFPERCLKEN0 
-	 * 2. Write the period to register TIMER1_TOP 
-	 * 3. Enable timer interrupt generation by writing 1 to TIMER1_IEN 
-	 * 4. Start the timer by writing 1 to TIMER1_CMD
+	 * 1. Enable clock to timer by setting bit 6 in CMU_HFPERCLKEN0 :)
+	 * 2. Write the period to register TIMER1_TOP :)
+	 * 3. Enable timer interrupt generation by writing 1 to TIMER1_IEN :)
+	 * 4. Start the timer by writing 1 to TIMER1_CMD :)
 	 * 
 	 * This will cause a timer interrupt to be generated every (period)
 	 * cycles. Remember to configure the NVIC as well, otherwise the
@@ -52,13 +52,13 @@ void setSamplingFrequency(uint32_t frequency)
 			prescaler_found = 0;
 			prescaler += 1;
 		}
-	}
-	
+	}	
 	setupSamplingTimer(top, prescaler);
-
 }
 
-
+void samplingTimer_setTop(uint16_t top){
+	*TIMER1_TOP = top;
+}
 
 /**
 * function to start the timer
@@ -84,6 +84,7 @@ void stopSamplingTimer()
 
 void setupSemiquaverTimer()
 {
+	/*	
 	// enable low energy timer 0 clock
 	*CMU_LFACLKEN0 |= CMU_LFACLKEN0_LETIMER0;
 
@@ -94,6 +95,14 @@ void setupSemiquaverTimer()
 	// Use 1kHz clock
 	*CMU_LFCLKSEL |= CMU_LFCLKSEL_LFAE;
 	*CMU_LFCLKSEL &= 0xFFFFFFFC; //clear CMU_LFCLKSEL_LFA
+	*/
+
+	// enable timer 2 clock
+	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER2;
+	// set timer 2 top
+	*TIMER2_TOP = 6835; // TOP=6835
+
+	*TIMER2_CTRL |= (8 << 24); //prescaler = 8
 }
 
 /**
@@ -103,7 +112,8 @@ void setupSemiquaverTimer()
 void startSemiquaverTimer()
 {
 	// start timer 0, which enables playing a sound
-	*LETIMER0_CMD |= LETIMER0_CMD_START;
+	//*LETIMER0_CMD |= LETIMER0_CMD_START;
+	*TIMER1_CMD |= TIMER1_CMD_START;
 }
 
 /**
@@ -113,7 +123,8 @@ void startSemiquaverTimer()
 void stopSemiquaverTimer()
 {
 	// stop timer 0, which disables playing a sound
-	*LETIMER0_CMD |= LETIMER0_CMD_STOP;
+	//*LETIMER0_CMD |= LETIMER0_CMD_STOP;
+	*TIMER1_CMD = TIMER1_CMD_STOP// 0x6;	//;
 }
 
 
@@ -122,5 +133,6 @@ void enableTimerInterrupts()
 {
 	// enable timer 1 interrupt
 	*TIMER1_IEN 	|= 1;
+	*TIMER2_IEN     |= 1;
 	*LETIMER0_IEN 	|= 1;
 }

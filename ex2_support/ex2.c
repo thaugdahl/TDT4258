@@ -23,7 +23,7 @@
 #define  SAMPLE_PRESCALER	0
 
 //#define  SAMPLE_PERIOD		54686	// Combined with a prescaler of 8, will result in ~1 Hz
-//#define  SAMPLE_PRESCALER	8
+//#define  SAMPLE_PRESCALER		8
 
 /**
  * Declaration of peripheral setup functions 
@@ -34,11 +34,13 @@ void setupNVIC();
 /**
  * Your code will start executing here 
  */
+
 int main(void)
 {
 	/**
 	 * Call the peripheral setup functions 
 	 */
+	
 	setupGPIO();
 	setupDAC();
 	setupSamplingTimer(SAMPLE_PERIOD, SAMPLE_PRESCALER);
@@ -47,16 +49,16 @@ int main(void)
 	/**
 	 * Enable interrupt handling 
 	 */
+	
 	setupNVIC();
 
-
-	
 	/**
 	 * TODO for higher energy efficiency, sleep while waiting for
 	 * interrupts instead of infinite loop for busy-waiting 
 	 */
+	
 	while (1) {
-		
+		//__asm__ ("wfi");
 	}
 
 	return 0;
@@ -76,10 +78,9 @@ void setupNVIC()
 	enableTimerInterrupts();
 	enableGPIOInterrupt();
 
-	// Bits 2 (GPIO_EVEN), 11 (GPIO_ODD), 
-	// 12(TIMER1) and 26(LETIMER0),
+	// Bits 1 (GPIO_EVEN), 11 (GPIO_ODD), 12(TIMER1), 13(TIMER2) and 26(LETIMER0),
 	// for their corresponding IRQ# channels
-	*ISER0 |= 0x4001802;	 
+	*ISER0 |= 0x4003802;	 
 }
 
 /**

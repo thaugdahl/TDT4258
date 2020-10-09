@@ -1,4 +1,5 @@
-#ifndef EFM32GG_H // Header Guard
+// Header Guard
+#ifndef EFM32GG_H 
 #define EFM32GG_H
 
 
@@ -63,6 +64,7 @@
 #define CMU2_HFPERCLKEN0_PRS    (1 << 15)
 #define CMU2_HFPERCLKEN0_GPIO   (1 << 13)
 #define CMU2_HFPERCLKEN0_TIMER1 (1 << 6)
+#define CMU2_HFPERCLKEN0_TIMER2 (1 << 7)
 
 #define CMU_HFCORECLKEN0_DMA    (1 << 0)
 
@@ -82,6 +84,15 @@
 #define TIMER1_IFC  ((volatile uint32_t*)(TIMER1_BASE + 0x18))
 #define TIMER1_TOP  ((volatile uint32_t*)(TIMER1_BASE + 0x1c))
 #define TIMER1_CNT  ((volatile uint32_t*)(TIMER1_BASE + 0x24))
+
+#define TIMER2_BASE 0x40010800
+
+#define TIMER2_CTRL ((volatile uint32_t*)(TIMER2_BASE + 0x00))
+#define TIMER2_CMD  ((volatile uint32_t*)(TIMER2_BASE + 0x04))
+#define TIMER2_IEN  ((volatile uint32_t*)(TIMER2_BASE + 0x0c))
+#define TIMER2_IFC  ((volatile uint32_t*)(TIMER2_BASE + 0x18))
+#define TIMER2_TOP  ((volatile uint32_t*)(TIMER2_BASE + 0x1c))
+#define TIMER2_CNT  ((volatile uint32_t*)(TIMER2_BASE + 0x24))
 
 #define TIMER1_CMD_START        (1 << 0)
 #define TIMER1_CMD_STOP         (1 << 1)

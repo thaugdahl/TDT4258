@@ -2,8 +2,10 @@
 #include <stdbool.h>
 
 #include "efm32gg.h"
-#include "sounds.h"
+//#include "sounds.h"
+#include "music.h"
 #include "utils.h"
+#include "dac.h"
 
 static int freq = 1;
 static int i = 0;
@@ -14,10 +16,10 @@ void setupDAC()
 	/*
 	 * TODO enable and set up the Digital-Analog Converter
 	 * 
-	 * 1. Enable the DAC clock by setting bit 17 in CMU_HFPERCLKEN0
-	 * 2. Prescale DAC clock by writing 0x50010 to DAC0_CTRL 
-	 * 3. Enable leftand right audio channels by writing 1 to DAC0_CH0CTRL andDAC0_CH1CTRL 
-	 * 4. Write a continuous stream of samples to the DAC data registers, DAC0_CH0DATA and DAC0_CH1DATA, for example from a timer interrupt 
+	 * 1. Enable the DAC clock by setting bit 17 in CMU_HFPERCLKEN0 :)
+	 * 2. Prescale DAC clock by writing 0x50010 to DAC0_CTRL :)
+	 * 3. Enable leftand right audio channels by writing 1 to DAC0_CH0CTRL andDAC0_CH1CTRL :)
+	 * 4. Write a continuous stream of samples to the DAC data registers, DAC0_CH0DATA and DAC0_CH1DATA, for example from a timer interrupt :)
 	 */
 	/**
 	 * 5 - Prescale : 2^5 = 32 (Clock divided by 32 (base is 14 MHz), if sinemode is enabled frequency will be )
@@ -26,6 +28,7 @@ void setupDAC()
 	 * 1 - OUTMODE = 1 (PIN - DAC output to pin enabled. DAC output to ADC and ACMP disabled)
 	 * 0 - SINEMODE disabled
 	*/
+	
 	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_DAC0;
 	*DAC0_CTRL = 0x50010;
 	*DAC0_CH0CTRL = 0x1;
@@ -33,7 +36,7 @@ void setupDAC()
 }
 
 /**TODO: finish comment
- * Frequencies: 
+ * Frequencies: NOT IN USE
  * 0 = 64*2^0 Hz =    32 Hz
  * 1 = 64*2^0 Hz =    64 Hz
  * 2 = 64*2^1 Hz =   128 Hz
