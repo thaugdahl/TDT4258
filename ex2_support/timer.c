@@ -81,13 +81,15 @@ void stopSamplingTimer()
 
 
 
-void setupSemiquaverTimer(uint16_t period, uint8_t prescaler)
+void setupSemiquaverTimer()
 {
+    // NOT FINISHED!!!
 	// enable timer 0 clock
 	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER0;
 	// set timer 0 top
-	*TIMER0_TOP = period;
-	*TIMER0_CTRL |= (prescaler << 24);
+	*LETIMER0_CTRL |= LETIMER0_COMP0;
+    *LETIMER0_COMP0 |= 0; //period
+	*TIMER0_CTRL |= 0;//(prescaler << 24);
 }
 
 /**
