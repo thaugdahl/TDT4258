@@ -11,6 +11,8 @@
  * TIMER1 interrupt handler 
  */
 
+static int counter = 0;
+
 void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 {
 	/**
@@ -18,25 +20,23 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 	 * Remember to clear the pending interrupt,
 	 * by writing 1 to TIMER1_IFC 
 	 */
-
+	*TIMER1_IFC |= 1;
 	advance_sine();
 
-	*TIMER1_IFC |= 1;
 }
-static int counter = 0;
 
 void __attribute__ ((interrupt)) TIMER2_IRQHandler()
 {
 	/**
 	 * TODO feed new samples to the DAC 
 	 * Remember to clear the pending interrupt,
-	 * by writing 1 to LETIMER0_IFC 
+	 * by writing 1 to TIMER2_IFC 
 	 */
 
+	*TIMER2_IFC |= 0x1;
 	//advance_music();
 	counter++;
 	*GPIO_PA_DOUT ^= counter;
-	*TIMER2_IFC |= 0x1;
 }
 
 void __attribute__ ((interrupt)) LETIMER0_IRQHandler()
@@ -46,10 +46,10 @@ void __attribute__ ((interrupt)) LETIMER0_IRQHandler()
 	 * Remember to clear the pending interrupt,
 	 * by writing 1 to LETIMER0_IFC 
 	 */
+	*LETIMER0_IFC |= 0x1;
 
 	advance_music();
-	*GPIO_PA_DOUT ^= 0xAA;
-	*LETIMER0_IFC |= 0x1;
+	//*GPIO_PA_DOUT ^= 0xAA;
 }
 
 /**
@@ -63,9 +63,9 @@ void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler()
 	 */
 
 	*GPIO_IFC = 0x55;
-	*GPIO_PA_DOUT = *GPIO_PC_DIN << 8;
 	//startSampling
-	start_song(0);
+	startSemiquaverTimer();
+	//start_song(0);
 
 }
 
@@ -80,8 +80,9 @@ void __attribute__ ((interrupt)) GPIO_ODD_IRQHandler()
 	 */
 
 	*GPIO_IFC = 0xAA;
-	*GPIO_PA_DOUT = *GPIO_PC_DIN << 8;
 	//stopTimer
-	stop_song();
+	stopSemiquaverTimer();
+
+	//stop_song();
 	//Timer();
 }

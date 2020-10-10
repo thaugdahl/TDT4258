@@ -113,7 +113,7 @@ void startSemiquaverTimer()
 {
 	// start timer 0, which enables playing a sound
 	//*LETIMER0_CMD |= LETIMER0_CMD_START;
-	*TIMER1_CMD |= TIMER1_CMD_START;
+	*TIMER2_CMD |= TIMER2_CMD_START;
 }
 
 /**
@@ -124,7 +124,7 @@ void stopSemiquaverTimer()
 {
 	// stop timer 0, which disables playing a sound
 	//*LETIMER0_CMD |= LETIMER0_CMD_STOP;
-	*TIMER1_CMD = TIMER1_CMD_STOP;// 0x6; 
+	*TIMER2_CMD = TIMER2_CMD_STOP;// 0x6; 
 }
 
 

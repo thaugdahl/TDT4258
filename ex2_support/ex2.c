@@ -56,7 +56,9 @@ int main(void)
 	 * TODO for higher energy efficiency, sleep while waiting for
 	 * interrupts instead of infinite loop for busy-waiting 
 	 */
-	
+	*GPIO_PA_DOUT = 0xFFFF;
+	startSemiquaverTimer();
+
 	while (1) {
 		//__asm__ ("wfi");
 	}
