@@ -3,16 +3,10 @@
 
 #include <stdint.h>
 
-/* notes and their TIMER1_TOP */
-#define G4 321
-#define C5 240
-#define E5 190
-#define G5 160
-
-typedef struct {
+typedef struct {    // TODO: Maybe delete this?
     uint16_t num;
     int samples[];
-} Note;
+} Note_t;
 
 /**
  * 
@@ -20,17 +14,17 @@ typedef struct {
 typedef struct {
     uint16_t len;
     uint16_t notes[];
-} Song;
+} song_t;
 
 typedef struct {
     uint8_t num_songs;
-    Song* songs[];
-} Jukebox;
+    song_t* songs[];
+} jukebox_t;
 
 void advance_music();
 void start_song(int song);
 void stop_song();
 
-extern uint8_t sinewave[];
+extern uint16_t sinewave[];
 
 #endif

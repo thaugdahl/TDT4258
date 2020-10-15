@@ -6,6 +6,7 @@
 #include "music.h"
 #include "utils.h"
 #include "dac.h"
+#include "sinewave.h"
 
 static int freq = 1;
 static int i = 0;
@@ -13,7 +14,7 @@ static int volume = 4;
 
 void setupDAC()
 {
-	/*
+	/**
 	 * TODO enable and set up the Digital-Analog Converter
 	 * 
 	 * 1. Enable the DAC clock by setting bit 17 in CMU_HFPERCLKEN0 :)
@@ -21,6 +22,7 @@ void setupDAC()
 	 * 3. Enable leftand right audio channels by writing 1 to DAC0_CH0CTRL andDAC0_CH1CTRL :)
 	 * 4. Write a continuous stream of samples to the DAC data registers, DAC0_CH0DATA and DAC0_CH1DATA, for example from a timer interrupt :)
 	 */
+	
 	/**
 	 * 5 - Prescale : 2^5 = 32 (Clock divided by 32 (base is 14 MHz), if sinemode is enabled frequency will be )
 	 * 0 - reserved
@@ -35,7 +37,8 @@ void setupDAC()
 	*DAC0_CH1CTRL = 0x1;
 }
 
-/**TODO: finish comment
+/**
+ * TODO: finish comment
  * Frequencies: NOT IN USE
  * 0 = 64*2^0 Hz =    32 Hz
  * 1 = 64*2^0 Hz =    64 Hz
@@ -48,6 +51,7 @@ void setupDAC()
  * 8 = 64*2^7 Hz =  8192 Hz
  * 9 = 64*2^0 Hz = 16384 Hz
 */
+
 //int period;
 int set_freq(int frequency)
 {
@@ -55,20 +59,23 @@ int set_freq(int frequency)
 	return 0;
 }
 
-/**TODO: finish comment
+/**
+ * TODO: finish comment
  * timer interrupt will call this function
-*/
+ */
 void advance_sine()
 {
-	 /**DAC0_CH0DATA = sinewave[i];
-	 *DAC0_CH1DATA = sinewave[i];
-	 i = (i + freq) % 1024; */
+	 /**
+	  * DAC0_CH0DATA = sinewave[i];
+	  * DAC0_CH1DATA = sinewave[i];
+	  * i = (i + freq) % 1024; 
+	  */
 
     //int tmp_index = i << freq & 1023;
 	i++;
-    i%=111;
+    i%=SINEWAVE_LENGTH;	// Changed from 111 to SINEWAVE_LENGTH to make scalable
 
-    int index = i << freq % 111;
+    int index = i << freq % SINEWAVE_LENGTH;
 	*DAC0_CH0DATA = sinewave[index] << volume;
 	*DAC0_CH1DATA = sinewave[index] << volume;
 

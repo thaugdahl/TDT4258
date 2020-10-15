@@ -3,17 +3,18 @@
 
 #include "efm32gg.h"
 #include "gpio.h"
+#include "music.h"
 
-/*
+/**
  * function to set up GPIO mode and interrupts
  */
 void setupGPIO()
 {
-	/*
+	/**
 	 * TODO set input and output pins for the joystick 
 	 */
 
-	/*
+	/**
 	 * Example of HW access from C code: turn on joystick LEDs D4-D8 check 
 	 * efm32gg.h for other useful register definitions 
 	 */
@@ -33,4 +34,45 @@ void enableGPIOInterrupt()
 	*GPIO_IEN = 0x00FF;
 	*GPIO_EXTIFALL = 0xFF;		// Only generate interrupt for falling edge
 	*GPIO_EXTIPSELL = 0x22222222;	// Port C chosen for Interrupt pin selection
+}
+
+void handle_gpio(uint16_t button_bitmask)
+{	
+	switch(button_bitmask) 
+	{
+		case SW1:
+			start_song(1);
+			*GPIO_PA_DOUT = ~(button_bitmask<<8);			
+			break;
+		
+		case SW2:
+			start_song(2);
+			*GPIO_PA_DOUT = ~(button_bitmask<<8);
+			break;
+		
+		case SW3:
+			*GPIO_PA_DOUT = ~(button_bitmask<<8);
+			break;
+		
+		case SW4:
+			*GPIO_PA_DOUT = ~(button_bitmask<<8);
+			break;
+		
+		case SW5:
+			*GPIO_PA_DOUT = ~(button_bitmask<<8);
+			break;
+		
+		case SW6:
+			*GPIO_PA_DOUT = ~(button_bitmask<<8);
+			break;
+
+		case SW7:
+			*GPIO_PA_DOUT = ~(button_bitmask<<8);
+			break;
+
+		case SW8:
+			*GPIO_PA_DOUT = ~(button_bitmask<<8);
+			break;
+	}
+	
 }

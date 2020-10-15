@@ -1,10 +1,13 @@
 #include "music.h"
 #include "timer.h"
 #include "utils.h"
-
+#include "sinewave.h"
+#include "notes.h"
 // Sampled from a signal with freq = 440 Hz
 // 440Hz = A4
-uint8_t sinewave[] = {
+uint16_t sinewave[SINEWAVE_LENGTH] = SINEWAVE;
+
+/**{    TODO: Delete this
 	255, 255, 254, 253, 252, 250, 247, 245,
 	242, 238, 234, 230, 226, 221, 216, 210,
 	205, 199, 192, 186, 179, 173, 166, 159,
@@ -20,22 +23,34 @@ uint8_t sinewave[] = {
 	220, 225, 230, 234, 238, 241, 245, 247,
 	250, 251, 253, 254, 255, 255, 255
 };
+*/
 
 // ============================================================
 // Songs
 // 0 is empty semiquaver
 // ============================================================
-Song mario_theme_start = { 16, {E5, 0, E5, 0, E5, 0, C5, 0, E5, 0, G5, 0, 0, 0, G4} };
+song_t mario_theme_start = { 25, {E5, 0, E5, 0, 0, 0, E5, 0, 0, 0, C5, 0, E5,0, 0, 0, G5, 0, 0, 0, 0, 0, 0, 0, G4} };
+//song_t mario_theme_start = { 16, {E5, 0, E5, 0, E5, 0, 0, C5, 0, E5, 0, G5, 0, 0, 0, G4} };
+song_t star_wars_theme = {1, {A5}}; 
+song_t curb_your_enthusiasm = {1, {A4}}; 
 
-static Song* active_song; // length of longest song/sound
+song_t full_mario = {131, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, B4, B4, 0, B4, B4, 0, 0, AS4, A4, 0, 0, 0, 0, 0, G3, 0, 0, 0, A3, 0, 0, 0, B3, 0, 0, 0, 0, 0, 0, 0, C4, 0, 0, 0, 0, 0, 0, 0, G3, 0, 0, GS4, B4, 0, 0, GS4, A4, A4, 0, A4, A4, 0, 0, GS4, A4, 0, 0, AS4, B4, 0, 0, 0, 0, 0, 0, AS4, 0, 0, 0, 0, 0, 0, C4, 0, 0, 0, 0, 0, 0, 0, G3, 0, 0, 0, 0, 0, 0, 0, B3, 0, 0, 0, A4, 0, 0, 0, G3, 0, 0, FS4, FS4, 0, 0, 0, B3, 0, 0, 0, G3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
+
+static song_t* active_song; 
 static uint8_t i = 0;
 
-static Jukebox jukebox = {
-    .num_songs = 1,
-    .songs = {&mario_theme_start}
+static jukebox_t jukebox = {
+    .num_songs = 3,
+    .songs = {&full_mario, &star_wars_theme, &curb_your_enthusiasm}
 };
 
 void start_song(int song){
+
+    if(active_song !=0)
+    {
+        stop_song();
+    }
+
     int song_index = clamp(song,0,jukebox.num_songs-1);
 
     active_song = jukebox.songs[song_index];
@@ -62,7 +77,7 @@ void advance_music(){
             break;
     }
     i++;
-    if (i == active_song->len){
+    if (i > active_song->len){
         stop_song();
     }
 }

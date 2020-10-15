@@ -6,12 +6,11 @@
 #include "timer.h"
 #include "interrupt_handlers.h"
 #include "music.h"
+#include "gpio.h"
 
 /**
  * TIMER1 interrupt handler 
  */
-
-static int counter = 0;
 
 void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 {
@@ -34,9 +33,7 @@ void __attribute__ ((interrupt)) TIMER2_IRQHandler()
 	 */
 
 	*TIMER2_IFC |= 0x1;
-	//advance_music();
-	counter++;
-	*GPIO_PA_DOUT ^= counter;
+	advance_music();
 }
 
 void __attribute__ ((interrupt)) LETIMER0_IRQHandler()
@@ -49,7 +46,6 @@ void __attribute__ ((interrupt)) LETIMER0_IRQHandler()
 	*LETIMER0_IFC |= 0x1;
 
 	advance_music();
-	//*GPIO_PA_DOUT ^= 0xAA;
 }
 
 /**
@@ -61,11 +57,10 @@ void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler()
 	 * TODO handle button pressed event, remember to clear pending
 	 * interrupt 
 	 */
+	uint32_t button_bitmask = *GPIO_IF;
 
 	*GPIO_IFC = 0x55;
-	//startSampling
-	startSemiquaverTimer();
-	//start_song(0);
+	handle_gpio(button_bitmask);
 
 }
 
@@ -78,11 +73,9 @@ void __attribute__ ((interrupt)) GPIO_ODD_IRQHandler()
 	 * TODO handle button pressed event, remember to clear pending
 	 * interrupt 
 	 */
+	uint32_t button_bitmask = *GPIO_IF;
+	handle_gpio(button_bitmask);
 
 	*GPIO_IFC = 0xAA;
-	//stopTimer
-	stopSemiquaverTimer();
 
-	//stop_song();
-	//Timer();
 }

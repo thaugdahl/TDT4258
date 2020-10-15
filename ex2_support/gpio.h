@@ -3,5 +3,6 @@
 
 void setupGPIO();
 void enableGPIOInterrupt();
+void handle_gpio(uint16_t button_bitmask);
 
 #endif

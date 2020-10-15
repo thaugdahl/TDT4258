@@ -57,7 +57,7 @@ void setSamplingFrequency(uint32_t frequency)
 }
 
 void samplingTimer_setTop(uint16_t top){
-	*TIMER1_TOP = top;
+	*TIMER1_TOPB = top;
 }
 
 /**
@@ -84,26 +84,33 @@ void stopSamplingTimer()
 
 void setupSemiquaverTimer()
 {
-	/*	
-	// enable low energy timer 0 clock
-	*CMU_LFACLKEN0 |= CMU_LFACLKEN0_LETIMER0;
-
-	// set timer 0 top
-	*LETIMER0_CTRL |= LETIMER0_CTRL_COMP0; 	//TOP = LETIMER0_COMP0
-    *LETIMER0_COMP0 |= 124; 				//TOP = 124 => 8 Hz, 125 ms period
-
-	// Use 1kHz clock
-	*CMU_LFCLKSEL |= CMU_LFCLKSEL_LFAE;
-	*CMU_LFCLKSEL &= 0xFFFFFFFC; //clear CMU_LFCLKSEL_LFA
-	*/
-
 	// enable timer 2 clock
 	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER2;
 	// set timer 2 top
-	*TIMER2_TOP = 54680; // TOP=6835  --  54680
+	setSemiquaverFreq(14);
 
 	*TIMER2_CTRL |= (8 << 24); //prescaler = 8
 }
+
+/**
+* function to set frequency. If the timer is running, use updateSemiquaverFreq() instead
+* @param freq is the desired frequency (default at 8)
+*/
+void setSemiquaverFreq(uint16_t freq)
+{	
+	uint16_t period = 54680 / freq;		// TOP = 54680 gives 1 Hz
+	*TIMER2_TOP = period;
+}
+/**
+* function to update frequency. If the timer is NOT running, use setSemiquaverFreq() instead
+* @param freq is the desired frequency (default at 8)
+*/
+void updateSemiquaverFreq(uint16_t freq)
+{
+	uint16_t period = 54680 / freq;		// TOP = 54680 gives 1 Hz
+	*TIMER2_TOPB = period; 
+}
+
 
 /**
 * function to start the timer
@@ -124,7 +131,7 @@ void stopSemiquaverTimer()
 {
 	// stop timer 0, which disables playing a sound
 	//*LETIMER0_CMD |= LETIMER0_CMD_STOP;
-	*TIMER2_CMD = TIMER2_CMD_STOP;// 0x6; 
+	*TIMER2_CMD |= TIMER2_CMD_STOP;// 0x6; 
 }
 
 

@@ -6,6 +6,8 @@
 #include "timer.h"
 #include "dac.h"
 #include "interrupt_handlers.h"
+#include "music.h"
+
 
 /**
  * TODO calculate the appropriate sample period for the sound wave(s) you 
@@ -57,7 +59,8 @@ int main(void)
 	 * interrupts instead of infinite loop for busy-waiting 
 	 */
 	*GPIO_PA_DOUT = 0xFFFF;
-	startSemiquaverTimer();
+	start_song(0);
+	//startSemiquaverTimer();
 
 	while (1) {
 		//__asm__ ("wfi");
