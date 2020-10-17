@@ -2,7 +2,6 @@
 #include <stdbool.h>
 
 #include "efm32gg.h"
-//#include "sounds.h"
 #include "music.h"
 #include "utils.h"
 #include "dac.h"
@@ -12,71 +11,37 @@ static int freq = 1;
 static int i = 0;
 static int volume = 4;
 
-void setupDAC()
-{
-	/**
-	 * TODO enable and set up the Digital-Analog Converter
-	 * 
-	 * 1. Enable the DAC clock by setting bit 17 in CMU_HFPERCLKEN0 :)
-	 * 2. Prescale DAC clock by writing 0x50010 to DAC0_CTRL :)
-	 * 3. Enable leftand right audio channels by writing 1 to DAC0_CH0CTRL andDAC0_CH1CTRL :)
-	 * 4. Write a continuous stream of samples to the DAC data registers, DAC0_CH0DATA and DAC0_CH1DATA, for example from a timer interrupt :)
-	 */
-	
+/**
+ * Set up and start DAC
+ * 
+ * Set prescaler to 32, and OUTMODE to 1 (DAC output to pin enabled. DAC output to ADC and ACMP disabled)
+ */ 
+void setupDAC() 
+{    
 	/**
 	 * 5 - Prescale : 2^5 = 32 (Clock divided by 32 (base is 14 MHz), if sinemode is enabled frequency will be )
 	 * 0 - reserved
 	 * 0 - 2 MSB reserved, 2 LSB - REFSEL = 0 (Internal 1.25 V bandgap reference)
 	 * 1 - OUTMODE = 1 (PIN - DAC output to pin enabled. DAC output to ADC and ACMP disabled)
 	 * 0 - SINEMODE disabled
-	*/
-	
+	*/ 
+	    
 	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_DAC0;
 	*DAC0_CTRL = 0x50010;
 	*DAC0_CH0CTRL = 0x1;
 	*DAC0_CH1CTRL = 0x1;
-}
-
+} 
+ 
 /**
- * TODO: finish comment
- * Frequencies: NOT IN USE
- * 0 = 64*2^0 Hz =    32 Hz
- * 1 = 64*2^0 Hz =    64 Hz
- * 2 = 64*2^1 Hz =   128 Hz
- * 3 = 64*2^2 Hz =   256 Hz
- * 4 = 64*2^3 Hz =   512 Hz
- * 5 = 64*2^4 Hz =  1024 Hz
- * 6 = 64*2^5 Hz =  2048 Hz
- * 7 = 64*2^6 Hz =  4096 Hz
- * 8 = 64*2^7 Hz =  8192 Hz
- * 9 = 64*2^0 Hz = 16384 Hz
-*/
-
-//int period;
-int set_freq(int frequency)
+ * Writes value to DAC from the next sine value
+ * Sampling timer (TIMER1) interrupt will call this function
+ */ 
+void advance_sine() 
 {
-	freq = clamp(frequency, 0, 9);
-	return 0;
-}
-
-/**
- * TODO: finish comment
- * timer interrupt will call this function
- */
-void advance_sine()
-{
-	 /**
-	  * DAC0_CH0DATA = sinewave[i];
-	  * DAC0_CH1DATA = sinewave[i];
-	  * i = (i + freq) % 1024; 
-	  */
-
-    //int tmp_index = i << freq & 1023;
 	i++;
-    i%=SINEWAVE_LENGTH;	// Changed from 111 to SINEWAVE_LENGTH to make scalable
-
-    int index = i << freq % SINEWAVE_LENGTH;
+	i %= SINEWAVE_LENGTH;	// Sets i back to 0 to avoid i increasing above the maximum length
+	int index = i << freq % SINEWAVE_LENGTH;
+	
 	*DAC0_CH0DATA = sinewave[index] << volume;
 	*DAC0_CH1DATA = sinewave[index] << volume;
-
-}
+} 

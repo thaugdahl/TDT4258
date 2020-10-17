@@ -1,112 +1,103 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+
 #include "efm32gg.h"
 #include "gpio.h"
 #include "timer.h"
 #include "dac.h"
 #include "interrupt_handlers.h"
 #include "music.h"
-
-
+    
+// Allows this Preprocessor Definition to be made in the compiler flags as well
+#ifndef INTERRUPT_DISABLED
+#define INTERRUPT_ENABLED true
+#else
+#define INTERRUPT_ENABLED false
+#endif	
+    
 /**
  * TODO calculate the appropriate sample period for the sound wave(s) you 
  * want to generate. The core clock (which the timer clock is derived
  * from) runs at 14 MHz by default. Also remember that the timer counter
  * registers are 16 bits. 
- */
+ */ 
+    
 /**
  * The period between sound samples, in clock cycles 
  * Sampling frequency can be calculated as following:
  * F_s = F_clk/ (2^(SAMPLE_PRESCALER)x(SAMPLE_PERIOD+1)) 
- */
-
-#define  SAMPLE_PERIOD		493	// Combined with a prescaler of 1, will result in ~32768 kHz
+ */ 
+    
+#define  SAMPLE_PERIOD		493	
 #define  SAMPLE_PRESCALER	0
-
-//#define  SAMPLE_PERIOD		54686	// Combined with a prescaler of 8, will result in ~1 Hz
-//#define  SAMPLE_PRESCALER		8
-
+    
 /**
  * Declaration of peripheral setup functions 
- */
+ */ 
 
 void setupNVIC();
 
+ 
 /**
  * Your code will start executing here 
- */
+ */ 
 
-int main(void)
+int main(void) 
 {
-	/**
-	 * Call the peripheral setup functions 
-	 */
-	
-	setupGPIO();
-	setupDAC();
+	//Call the peripheral setup functions   
+	setupGPIO();	
+	setupDAC();	
 	setupSamplingTimer(SAMPLE_PERIOD, SAMPLE_PRESCALER);
-	setupSemiquaverTimer();
-
-	/**
-	 * Enable interrupt handling 
-	 */
-	
+	setupNoteTimer();
+ 
+#if INTERRUPT_ENABLED
+	//Enable interrupt handling 
 	setupNVIC();
-
-	/**
-	 * TODO for higher energy efficiency, sleep while waiting for
-	 * interrupts instead of infinite loop for busy-waiting 
-	 */
-	*GPIO_PA_DOUT = 0xFFFF;
+#else
+	uint16_t button_bitmask = *GPIO_PC_DIN & 0xff;	
+#endif	
+	    	
 	start_song(0);
-	//startSemiquaverTimer();
+	while (1) 
+	{
+#if INTERRUPT_ENABLED
+		__asm__ ("wfi");
+#else	
+		if (*TIMER1_IF && TIMER1_IF_OF)	
+ 		{
+			advance_sine();
+			*TIMER1_IFC |= TIMER1_IFC_OF;	
+		}
 
-	while (1) {
-		//__asm__ ("wfi");
+		if (*TIMER2_IF && TIMER2_IF_OF)	
+ 		{						
+			advance_music();	
+			*TIMER2_IFC |= 0x1;	
+		}
+		
+		if (button_bitmask != (~(*GPIO_PC_DIN)))
+		{			
+			button_bitmask = (~(*GPIO_PC_DIN));			
+			handle_gpio(button_bitmask);
+		}
+#endif	
 	}
-
-	return 0;
+return 0;
 }
 
-void setupNVIC()
+/**
+ * Enables interrupts
+ * Enables interrupts and sets the correct bits in the ISER register 
+ * bit 1 (GPIO_EVEN), 11 (GPIO_ODD), 12(TIMER1) and 13(TIMER2) 
+ */
+void setupNVIC() 
 {
-	/**
-	 * TODO use the NVIC ISERx registers to enable handling of
-	 * interrupt(s) remember two things are necessary for interrupt
-	 * handling: - the peripheral must generate an interrupt signal - the
-	 * NVIC must be configured to make the CPU handle the signal You will
-	 * need TIMER1, GPIO odd and GPIO even interrupt handling for this
-	 * assignment. 
-	 */
-
 	enableTimerInterrupts();
 	enableGPIOInterrupt();
 
-	// Bits 1 (GPIO_EVEN), 11 (GPIO_ODD), 12(TIMER1), 13(TIMER2) and 26(LETIMER0), for their corresponding IRQ# channels
 	*ISER0 |= ISER0_GPIO_EVEN;
 	*ISER0 |= ISER0_GPIO_ODD;
 	*ISER0 |= ISER0_TIMER1;
 	*ISER0 |= ISER0_TIMER2;
-	//*ISER0 |= ISER0_LETIMER0;
-
-}
-
-/**
- * if other interrupt handlers are needed, use the following names:
- * NMI_Handler HardFault_Handler MemManage_Handler BusFault_Handler
- * UsageFault_Handler Reserved7_Handler Reserved8_Handler
- * Reserved9_Handler Reserved10_Handler SVC_Handler DebugMon_Handler
- * Reserved13_Handler PendSV_Handler SysTick_Handler DMA_IRQHandler
- * GPIO_EVEN_IRQHandler TIMER0_IRQHandler USART0_RX_IRQHandler
- * USART0_TX_IRQHandler USB_IRQHandler ACMP0_IRQHandler ADC0_IRQHandler
- * DAC0_IRQHandler I2C0_IRQHandler I2C1_IRQHandler GPIO_ODD_IRQHandler
- * TIMER1_IRQHandler TIMER2_IRQHandler TIMER3_IRQHandler
- * USART1_RX_IRQHandler USART1_TX_IRQHandler LESENSE_IRQHandler
- * USART2_RX_IRQHandler USART2_TX_IRQHandler UART0_RX_IRQHandler
- * UART0_TX_IRQHandler UART1_RX_IRQHandler UART1_TX_IRQHandler
- * LEUART0_IRQHandler LEUART1_IRQHandler LETIMER0_IRQHandler
- * PCNT0_IRQHandler PCNT1_IRQHandler PCNT2_IRQHandler RTC_IRQHandler
- * BURTC_IRQHandler CMU_IRQHandler VCMP_IRQHandler LCD_IRQHandler
- * MSC_IRQHandler AES_IRQHandler EBI_IRQHandler EMU_IRQHandler 
- */
+} 

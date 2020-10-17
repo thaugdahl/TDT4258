@@ -6,7 +6,10 @@ CC=arm-none-eabi-gcc
 LD=arm-none-eabi-gcc
 OBJCOPY=arm-none-eabi-objcopy
 
-CFLAGS=-mcpu=cortex-m3 -mthumb -g -std=c99 -Wall
+# Add -DINTERRUPT_DISABLED to disable interrupts
+# Example: make ADDFLAGS=-DINTERRUPT_DISABLED
+ADDFLAGS=
+CFLAGS=-mcpu=cortex-m3 -mthumb -g -std=c99 -Wall ${ADDFLAGS}
 LDFLAGS=-mcpu=cortex-m3 -mthumb -g -lgcc -lc -lcs3 -lcs3unhosted -lefm32gg -Llib
 ASFLAGS=-mcpu=cortex-m3 -mthumb -g
 LINKERSCRIPT=lib/efm32gg.ld
