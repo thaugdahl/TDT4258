@@ -3,11 +3,13 @@ import string
 
 from numpy.lib.function_base import append
 
-file_array = ["godfather_theme"]
+# Alter this array to contain the extension-less names of the
+# files containing the note-sheets
+file_array = ["godfather_theme_og", "mario_og", "star_wars_og", "undertale_og"]
 
 for loop_nr in range(len(file_array)):
 
-    f1 = open(str(Path(__file__).parent)+"/" + file_array[loop_nr] + "_og.txt", "r")
+    f1 = open(str(Path(__file__).parent)+"/" + file_array[loop_nr] + ".txt", "r")
 
     text = f1.read()
 
