@@ -59,3 +59,5 @@ dkms.conf
 
 !ex2_support/lib/libefm32gg.a
 ex2_support/*.bin
+
+/linux-3.12-rc4
