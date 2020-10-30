@@ -1,0 +1,41 @@
+# vim: set fdm=marker fdl=1:
+{{{ 2020-10-30T09:53:05+0100 /usr/local/lib/ptxdist-2012.12.0/bin/ptxdist select configs/ptxconfig
+{{{ 2020-10-30T09:53:05+0100 /usr/local/lib/ptxdist-2012.12.0/bin/ptxdist select configs/ptxconfig
+
+}}} 2020-10-30T09:53:05+0100 /usr/local/lib/ptxdist-2012.12.0/bin/ptxdist select configs/ptxconfig; (exit value: 0)
+
+
+
+{{{ 2020-10-30T09:53:40+0100 /usr/local/lib/ptxdist-2012.12.0/bin/ptxdist select configs/ptxconfig
+{{{ 2020-10-30T09:53:40+0100 /usr/local/lib/ptxdist-2012.12.0/bin/ptxdist select configs/ptxconfig
+
+}}} 2020-10-30T09:53:40+0100 /usr/local/lib/ptxdist-2012.12.0/bin/ptxdist select configs/ptxconfig; (exit value: 0)
+
+
+
+{{{ 2020-10-30T09:53:57+0100 /usr/local/lib/ptxdist-2012.12.0/bin/ptxdist 
+
+}}} 2020-10-30T09:53:57+0100 /usr/local/lib/ptxdist-2012.12.0/bin/ptxdist ; (exit value: 0)
+
+
+
+{{{ 2020-10-30T09:54:22+0100 /usr/local/lib/ptxdist-2012.12.0/bin/ptxdist platform configs/platform-energymicro-efm32gg-dk3750/platformconfig
+{{{ 2020-10-30T09:54:22+0100 /usr/local/lib/ptxdist-2012.12.0/bin/ptxdist platform configs/platform-energymicro-efm32gg-dk3750/platformconfig
+
+}}} 2020-10-30T09:54:22+0100 /usr/local/lib/ptxdist-2012.12.0/bin/ptxdist platform configs/platform-energymicro-efm32gg-dk3750/platformconfig; (exit value: 0)
+
+
+
+{{{ 2020-10-30T09:54:44+0100 /usr/local/lib/ptxdist-2012.12.0/bin/ptxdist toolchain /opt/ex3/OSELAS.Toolchain-2012.12.0/arm-cortexm3-uclinuxeabi/gcc-4.7.2-uclibc-0.9.33.2-binutils-2.22-kernel-3.6-sanitized/bin
+
+}}} 2020-10-30T09:54:44+0100 /usr/local/lib/ptxdist-2012.12.0/bin/ptxdist toolchain /opt/ex3/OSELAS.Toolchain-2012.12.0/arm-cortexm3-uclinuxeabi/gcc-4.7.2-uclibc-0.9.33.2-binutils-2.22-kernel-3.6-sanitized/bin; (exit value: 1)
+
+
+
+{{{ 2020-10-30T09:56:15+0100 /usr/local/lib/ptxdist-2012.12.0/bin/ptxdist select configs/ptxconfig
+{{{ 2020-10-30T09:56:16+0100 /usr/local/lib/ptxdist-2012.12.0/bin/ptxdist select configs/ptxconfig
+
+}}} 2020-10-30T09:56:16+0100 /usr/local/lib/ptxdist-2012.12.0/bin/ptxdist select configs/ptxconfig; (exit value: 0)
+
+
+
