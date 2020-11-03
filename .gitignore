@@ -61,3 +61,4 @@ dkms.conf
 ex2_support/*.bin
 
 /linux-3.12-rc4
+/.vscode

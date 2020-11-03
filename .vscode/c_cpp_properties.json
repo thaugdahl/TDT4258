@@ -3,7 +3,8 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/ex3_full_game/local_src/**"
             ],
             "defines": [
                 "_DEBUG",

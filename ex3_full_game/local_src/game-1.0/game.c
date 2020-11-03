@@ -8,8 +8,7 @@
 #include <fcntl.h>
 #include <math.h>
 
-
-#include "game.h"
+//#include "game.h"
 #include "display.h"
 
 //! Remember to comment everything!!!!!!!
@@ -24,13 +23,15 @@
  * 
  * TODO: implement game controller (required)
  * 
- * TODO: choose game (required)
+ * //TODO: choose game (required)
+ * 		?Game = maze game => simple and fun for the family ?
  * 
  * * TODO: create debugging printer(custom pretty system with options to disable)
  * 
  * * TODO: create menu
  * 
  * * TODO: create scoreboard
+ * 		* TODO: create timer for the maze
  * 
  */
 
@@ -41,29 +42,36 @@ int main(int argc, char *argv[])
 	screen_init();
 	printf("Hi game, I'm dad\n");
 	
-	//red
+	//RED
 	screen_fill(0b11111<<11);
 	sleep(1);
 	printf("Are ya winning, son?\n");
 	
-	//green
+	//GREEN
 	screen_fill(0b111111<<5);
 	sleep(1);
 	printf("Are YOU winning, dad?\n");
 	
-	//blue
+	//BLUE
 	screen_fill(0b11111);
 	sleep(1);
 	printf("Son, I am dissapoint\n");
 
 
-	draw_rectangle(150, 100, 70, 50, 0xFA13);
+	rectangle_draw(150, 100, 70, 50, 0b11111<<11);
 
 	printf("REEEEEEEEEEE\n");
 
 	sleep(1);
 	
-	draw_rectangle(100, 150, 70, 50, 0x1674);
+	player_area_fill(0b111111<<5);
+
+	sleep(2);
+
+	screen_refresh();
 
 	exit(EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }
+
+

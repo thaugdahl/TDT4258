@@ -9,12 +9,15 @@
 CFLAGS += -O2 -g -Wall #-Wsign-compare -Wfloat-equal -Wformat-security #-Werror
 CPPFLAGS +=
 LDFLAGS +=
+USERFILES = display.o
 
+all:  game
 
-all: game
+game: ${USERFILES}
+	${CC} ${CFLAGS} game.c ${USERFILES}  -o game ${LDFLAGS}
 
 clean:
-	-rm -f game
+	-rm -f  game *.o
 
 install:
 

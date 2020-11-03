@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 echo "start heresy"
 rm -r /home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/local_src
-cp -r /mnt/hgfs/TDT4258/TDT4258/ex3_full_game/OSELAS.BSP-EnergyMicro-Gecko/local_src /home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/local_src
+cp -r /mnt/hgfs/TDT4258/TDT4258/ex3_full_game/local_src /home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/local_src
 
 cd /home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/
 
@@ -27,7 +27,7 @@ elif [ "$1" == "os" ]; then
 elif  [ "$1" == "game" ]; then
 
     ptxdist clean game
-    ptxdist compile game
+    ptxdist compile game 
     echo "Compile successful ? (y/n)"
     read user_input
     if [ "$user_input" == "y" ]; then

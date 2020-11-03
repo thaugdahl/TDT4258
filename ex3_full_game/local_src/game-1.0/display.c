@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <math.h>
+#include <memory.h>
 
 #include "display.h"
 
@@ -23,11 +24,21 @@ struct fb_copyarea rect;
 * 
 * 
 */
+
 void screen_init()
 {
 	printf("screen initalizing\n");
 
-	
+	rect.dx = 0;
+	rect.dy = 0;
+	rect.width = 320;
+	rect.height = 240;
+
+	player_area.dx 		= 0;
+	player_area.dy 		= 220;
+	player_area.width 	= 320;
+	player_area.height 	= 20;
+
     fbfd = open("/dev/fb0", O_RDWR);
 	printf("fbfd value: %d\n", fbfd);
 
@@ -49,13 +60,27 @@ void screen_init()
 /**
 * @brief refreshes screen
 * 
-* Values written to screen_values[] are printed on screen TODO: Verify that this comment is true
+* Values written to screen_values[] are printed on screen
 */
+
 void screen_refresh()
 {
-	printf("refreshing screen\n");
 	ioctl(fbfd, 0x4680, &rect);
-	printf("refreshed screen\n");
+}
+
+void player_area_refresh()
+{
+	ioctl(fbfd, 0x4680, &player_area);
+}
+
+void player_area_fill(uint16_t value)
+{
+	uint32_t i = 0;
+	for(i=0; i<screensize_bytes; i++){
+		screen_values[i]=value;
+	}
+
+	player_area_refresh();
 }
 
 /**
@@ -64,6 +89,7 @@ void screen_refresh()
 * @param value holds the color that is used to fill the screen (bit 15-11=red, bit 10-5=green, bit 4-0=blue)
 * Fills all pixels with the color that is given in the parameter value
 */
+
 void screen_fill(uint16_t value)
 {
 	uint32_t i = 0;
@@ -72,28 +98,68 @@ void screen_fill(uint16_t value)
 		screen_values[i]=value;
 	}
 	
-	//comand driver to update display
-	//screen_refresh();
-}
-
-void rectangle_draw(int x_pos, int y_pos, int width, int height, int color) 
-{
-	rect.dx = x_pos;
-	rect.dy = y_pos;
-	rect.height = height;
-	rect.width = width;
-	rect.color = color;
+	//command driver to update display
 	screen_refresh();
 }
 
-void rectangle_up()
+void rectangle_draw(int x_pos, int y_pos, int width, int height, uint16_t color) 
 {
-	rect.dx += 1;
-	refresh_screen();
+	int y;
+	int x;
+	if (x_pos+width > SCREEN_SIZE_X || y_pos+height > SCREEN_SIZE_Y)
+	{
+		perror("Error: Drawing rectangle out of screen bounds");
+		exit(EXIT_FAILURE);
+	}
+	
+	for (y = y_pos; y < height+y_pos; y++)
+	{
+		for(x = x_pos; x < width+x_pos; x++)
+		{ 
+			int pos = x+y*SCREEN_SIZE_X;
+			screen_values[pos] = color;
+		}
+	}
+	
+	screen_refresh();
 }
 
-void rectangle_down()
-{
-	rect.dx -= 1;
-	refresh_screen();
+/// !!!!!!!!!!!!!!!!!!!!! for testing
+
+	rect.dx = 0;
+	rect.dy = 0;
+	rect.width = 320;
+	rect.height = 240;
+
+	player_area.dx 		= &rect.dx;
+	player_area.dy 		= &rect.dy;
+	player_area.width 	= 320;
+	player_area.height 	= 20;
+
+
+
+struct player = {
+	x 
+	y
+	x_next
+	y_next
 }
+	struct fb_copyarea player_area;
+player_area.dx = &player.x
+player.x_next = x+dx
+
+if player.x_next = vegg
+player.x_next = player.x
+break;
+else
+figure_draw(&player)
+	screen_values -= player.x
+	screen_values += player.x_next
+
+#define vei = 0
+#define vegg = 1
+
+0001101010010
+000111001010
+
+color = 0xff*(~pixel)
