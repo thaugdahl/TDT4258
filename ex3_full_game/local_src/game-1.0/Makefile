@@ -9,7 +9,7 @@
 CFLAGS += -O2 -g -Wall #-Wsign-compare -Wfloat-equal -Wformat-security #-Werror
 CPPFLAGS +=
 LDFLAGS +=
-USERFILES = display.o
+USERFILES = display.o henrik_test.o
 
 all:  game
 

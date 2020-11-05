@@ -21,8 +21,8 @@ struct fb_copyarea rect;
 
 /**
 * @brief initilize the screen
-* 
-* 
+*
+*
 */
 
 void screen_init()
@@ -46,11 +46,11 @@ void screen_init()
      	perror("Error: cannot open framebuffer device");
      	exit(EXIT_FAILURE);
 	}
-    
+
 	if(ioctl(fbfd, FBIOGET_VSCREENINFO, &screen_info) == -1){
 		perror("Error: failed to get screen info\n");
 		exit(EXIT_FAILURE);
-	} 
+	}
 
    	screensize_bytes = SCREEN_LENGTH * screen_info.bits_per_pixel/8;
 	screen_values = (uint16_t*) mmap(NULL, screensize_bytes, PROT_READ | PROT_WRITE, MAP_SHARED, fbfd, 0);
@@ -59,7 +59,7 @@ void screen_init()
 
 /**
 * @brief refreshes screen
-* 
+*
 * Values written to screen_values[] are printed on screen
 */
 
@@ -85,7 +85,7 @@ void player_area_fill(uint16_t value)
 
 /**
 * @brief fill screen
-* 
+*
 * @param value holds the color that is used to fill the screen (bit 15-11=red, bit 10-5=green, bit 4-0=blue)
 * Fills all pixels with the color that is given in the parameter value
 */
@@ -93,16 +93,16 @@ void player_area_fill(uint16_t value)
 void screen_fill(uint16_t value)
 {
 	uint32_t i = 0;
-	
+
 	for(i=0; i<screensize_bytes; i++){
 		screen_values[i]=value;
 	}
-	
+
 	//command driver to update display
 	screen_refresh();
 }
 
-void rectangle_draw(int x_pos, int y_pos, int width, int height, uint16_t color) 
+void rectangle_draw(int x_pos, int y_pos, int width, int height, uint16_t color)
 {
 	int y;
 	int x;
@@ -111,16 +111,16 @@ void rectangle_draw(int x_pos, int y_pos, int width, int height, uint16_t color)
 		perror("Error: Drawing rectangle out of screen bounds");
 		exit(EXIT_FAILURE);
 	}
-	
+
 	for (y = y_pos; y < height+y_pos; y++)
 	{
 		for(x = x_pos; x < width+x_pos; x++)
-		{ 
+		{
 			int pos = x+y*SCREEN_SIZE_X;
 			screen_values[pos] = color;
 		}
 	}
-	
+
 	screen_refresh();
 }
 
@@ -139,7 +139,7 @@ void rectangle_draw(int x_pos, int y_pos, int width, int height, uint16_t color)
 
 
 struct player = {
-	x 
+	x
 	y
 	x_next
 	y_next
