@@ -31,6 +31,10 @@ actor_t stack_pop(actor_stack_t *stack)
     else
     {
         printf("\n\n!!none left to REACH!!!!!!!\n\n\n");
+        actor_t a;
+        a.x = 0;
+        a.y = 0;
+        return a;
     }
 }
 
@@ -139,9 +143,11 @@ uint8_t pos_to_dir(actor_t last_actor, actor_t next_actor)
 void init_maze(maze_t *maze)
 {
     uint8_t index;
-    for (pos_t y = 0; y < maze->length_y; y++)
+    pos_t y;
+    for (y = 0; y < maze->length_y; y++)
     {
-        for (pos_t x = 0; x < maze->length_x; x++)
+        pos_t x;
+        for ( x = 0; x < maze->length_x; x++)
         {
             index = COR_TO_INDEX(x, y, maze->length_x);
             maze->squares[index].paths = 0b00001111;
@@ -173,13 +179,15 @@ void _debug_print(maze_t *maze)
 {
     printf("------------------------\n------------------------\n------------------------\n");
     uint32_t controll = 0;
-    for (int y = 0; y < maze->length_y; y++)
+    int y;
+    for (y = 0; y < maze->length_y; y++)
     {
-        for (int x = 0; x < maze->length_x; x++)
+        int x;
+        for (x = 0; x < maze->length_x; x++)
         {
             uint8_t visited = maze->squares[COR_TO_INDEX(x,y,maze->length_x)].visited;
-            printf("x:%d y:%d v:%d i:%d \n",
-                   x,y,visited&1,COR_TO_INDEX(x,y,maze->length_x));
+        //    printf("x:%d y:%d v:%d i:%d \n",
+        //           x,y,visited&1,COR_TO_INDEX(x,y,maze->length_x));
             if ((visited&0x1) == 1)
             {
                 controll ++;
@@ -211,7 +219,7 @@ int goto_next_square( maze_t *maze,
             (test_pos.y < maze->length_y))
         {
             stack_push(&new_path_stack, test_pos);
-            printf("found possible path: x:%d y:%d\n",test_pos.x, test_pos.y);
+        //    printf("found possible path: x:%d y:%d\n",test_pos.x, test_pos.y);
         }else
         {
             maze->squares[index].paths &= ~SET_VALID_DIRECTION(UP);
@@ -229,7 +237,7 @@ int goto_next_square( maze_t *maze,
             (test_pos.y < maze->length_y))
         {
             stack_push(&new_path_stack, test_pos);
-            printf("found possible path: x:%d y:%d\n",test_pos.x, test_pos.y);
+        //    printf("found possible path: x:%d y:%d\n",test_pos.x, test_pos.y);
 
         }else
         {
@@ -248,7 +256,7 @@ int goto_next_square( maze_t *maze,
             (test_pos.y < maze->length_y))
         {
             stack_push(&new_path_stack, test_pos);
-            printf("found possible path: x:%d y:%d\n",test_pos.x, test_pos.y);
+        //    printf("found possible path: x:%d y:%d\n",test_pos.x, test_pos.y);
 
         }else
         {
@@ -267,7 +275,7 @@ int goto_next_square( maze_t *maze,
             (test_pos.y < maze->length_y))
         {
             stack_push(&new_path_stack, test_pos);
-            printf("found possible path: x:%d y:%d\n",test_pos.x, test_pos.y);
+        //    printf("found possible path: x:%d y:%d\n",test_pos.x, test_pos.y);
         }else
         {
             maze->squares[index].paths &= ~SET_VALID_DIRECTION(LEFT);
@@ -285,8 +293,9 @@ int goto_next_square( maze_t *maze,
         {
             int new_path_index;
             new_path_index = rand() % (stack_length(&new_path_stack));
-            printf("new path index:%d\n",new_path_index);
-            for (int i = 0; i < new_path_index; i++)
+            //printf("new path index:%d\n",new_path_index);
+            int i;
+            for (i = 0; i < new_path_index; i++)
             {
                 stack_pop(&new_path_stack);
             }
@@ -341,8 +350,8 @@ int goto_next_square( maze_t *maze,
 
 void generate_maze( pos_t    squares_x,
                     pos_t    squares_y,
-                    uint16_t screen_x,
-                    uint16_t screen_y,
+                    uint16_t size_x,
+                    uint16_t size_y,
                     maze_t   *maze,
                     pos_t    start_x,
                     pos_t    start_y,
@@ -353,8 +362,8 @@ void generate_maze( pos_t    squares_x,
     maze->length_x = squares_x;
     maze->length_y = squares_y;
 
-    maze->size_x = (uint16_t)(screen_x/squares_x);
-    maze->size_y = (uint16_t)(screen_y/squares_y);
+    maze->size_x = size_x;
+    maze->size_y = size_y;
 
     maze->start_pos.x = start_x;
     maze->start_pos.y = start_y;
@@ -376,8 +385,6 @@ void generate_maze( pos_t    squares_x,
      */
     //variables
     actor_t last_actor;
-    actor_t next_actor;
-    actor_t current_actor;
     uint8_t timeout;
     uint16_t backup_timeout = 0;
     printf("start: x:%d y:%d\n", stack_read_top(&path_stack).x,stack_read_top(&path_stack).y);
@@ -387,15 +394,20 @@ void generate_maze( pos_t    squares_x,
         last_actor = stack_read_top(&path_stack);
 
         // choose next square with error check
-        if (goto_next_square(maze, &path_stack) == 0)
-        {
-            printf("\n\n!! done !!\n\n");
-            break;
-        }
+        //if (goto_next_square(maze, &path_stack) == 0)
+        //{
+        //    printf("\n\n!! done !!\n\n");
+        //    break;
+        //}
+        
+        //printf("x:%d y:%d len:%d\n\n", stack_read_top(&path_stack).x,
+        //       stack_read_top(&path_stack).y, path_stack.head);
+        goto_next_square(maze, &path_stack);
+        goto_next_square(maze, &path_stack);
+        goto_next_square(maze, &path_stack);
+        goto_next_square(maze, &path_stack);        
 
-        printf("x:%d y:%d len:%d\n\n", stack_read_top(&path_stack).x,
-               stack_read_top(&path_stack).y, path_stack.head);
-
+        break;
         // timeout
         if ((last_actor.x == stack_read_top(&path_stack).x) &&
             (last_actor.y == stack_read_top(&path_stack).y))
@@ -407,7 +419,6 @@ void generate_maze( pos_t    squares_x,
                 printf("!!timeout!!\n");
                 break;
             }
-
         }else
         {
             timeout = 0;
@@ -434,49 +445,55 @@ void write_maze_to_screenvalues(maze_t *maze, uint16_t *screen_values,
                                 uint16_t wall_color, uint16_t screen_length,
                                 uint16_t screen_hight)
 {
-    for (uint16_t y = 0; y < maze->length_y; y++)
+    uint16_t y;
+    for (y = 0; y < maze->length_y; y++)
     {
-        for (uint16_t x = 0; x < maze->length_x; x++)
+        uint16_t x;
+        for (x = 0; x < maze->length_x; x++)
         {
             uint32_t maze_index = COR_TO_INDEX(x,y,maze->length_x);
-            uint8_t paths = (maze->squares[maze_index].paths
-                             & WALKED_PATH_MASK) >> 4;
+            uint8_t paths = (maze->squares[maze_index].paths) >> 4;
+            printf("x:%d y:%d index:%d paths:%d\n", x, y, maze_index, paths);
 
-            if (GET_DIRECTION(paths, UP) == SET_DIRECTION(UP))
+            if (GET_DIRECTION(paths, UP) != SET_DIRECTION(UP))
             {
                 uint16_t start_x = x * maze->size_x;
                 uint16_t y_pos = y * maze->size_y;
-                for (uint16_t i = start_x; i < (start_x + maze->size_x); i++)
+                uint16_t i;
+                for (i = start_x; i < (start_x + maze->size_x); i++)
                 {
                     uint16_t screen_index = COR_TO_INDEX(i, y_pos, screen_length);
                     screen_values[screen_index] = wall_color;
                 }
             }
-            if (GET_DIRECTION(paths, RIGHT) == SET_DIRECTION(RIGHT))
+            if (GET_DIRECTION(paths, RIGHT) != SET_DIRECTION(RIGHT))
             {
-                uint16_t x_pos = x * maze->size_x + maze->size_x;
+                uint16_t x_pos =( x * maze->size_x) + maze->size_x;
                 uint16_t start_y = y * maze->size_y;
-                for (uint16_t i = start_y; i < (start_y + maze->size_y); i++)
+                uint16_t i;
+                for (i = start_y; i < (start_y + maze->size_y); i++)
                 {
                     uint16_t screen_index = COR_TO_INDEX(x_pos, i, screen_length);
                     screen_values[screen_index] = wall_color;
                 }
             }
-            if (GET_DIRECTION(paths, DOWN) == SET_DIRECTION(DOWN))
+            if (GET_DIRECTION(paths, DOWN) != SET_DIRECTION(DOWN))
             {
                 uint16_t start_x = x * maze->size_x;
-                uint16_t y_pos = y * maze->size_y + maze->size_y;
-                for (uint16_t i = start_x; i < (start_x + maze->size_x); i++)
+                uint16_t y_pos = (y * maze->size_y) + maze->size_y;
+                uint16_t i;
+                for (i = start_x; i < (start_x + maze->size_x); i++)
                 {
                     uint16_t screen_index = COR_TO_INDEX(i, y_pos, screen_length);
                     screen_values[screen_index] = wall_color;
                 }
             }
-            if (GET_DIRECTION(paths, LEFT) == SET_DIRECTION(LEFT))
+            if (GET_DIRECTION(paths, LEFT) != SET_DIRECTION(LEFT))
             {
                 uint16_t x_pos = x * maze->size_x;
                 uint16_t start_y = y * maze->size_y;
-                for (uint16_t i = start_y; i < (start_y + maze->size_y); i++)
+                uint16_t i;
+                for (i = start_y; i < (start_y + maze->size_y); i++)
                 {
                     uint16_t screen_index = COR_TO_INDEX(x_pos, i, screen_length);
                     screen_values[screen_index] = wall_color;
@@ -487,26 +504,26 @@ void write_maze_to_screenvalues(maze_t *maze, uint16_t *screen_values,
 }
 
 
-void main()
-{
-    srand(time(0));
-    maze_t maze;
-    generate_maze(5, 5, 100, 100, &maze, 1,1,3,3);
-    _debug_print(&maze);
-    /**
-    //test
-    actor_stack_t test;
-    actor_t test1;
-    test1.x = 1;
-    test1.y = 1;
-    actor_t test2;
-    test2.x = 2;
-    test2.y = 2;
-    stack_create(&test,5);
-    stack_push(&test, test1);
-    stack_push(&test, test2);
-    actor_t read1 = stack_pop(&test);
-    printf("x:%d, y:%d", read1.x, read1.y);
-    */
-    exit(EXIT_SUCCESS);
-}
+//void main()
+//{
+//    srand(time(0));
+//    maze_t maze;
+//    generate_maze(5, 5, 100, 100, &maze, 1,1,3,3);
+//    _debug_print(&maze);
+//    /**
+//    //test
+//    actor_stack_t test;
+//    actor_t test1;
+//    test1.x = 1;
+//    test1.y = 1;
+//    actor_t test2;
+//    test2.x = 2;
+//    test2.y = 2;
+//    stack_create(&test,5);
+//    stack_push(&test, test1);
+//    stack_push(&test, test2);
+//    actor_t read1 = stack_pop(&test);
+//    printf("x:%d, y:%d", read1.x, read1.y);
+//    */
+//    exit(EXIT_SUCCESS);
+//}

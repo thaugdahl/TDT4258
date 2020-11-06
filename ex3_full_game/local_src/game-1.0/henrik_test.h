@@ -11,7 +11,7 @@
 #define GET_WALKED_DIRECTION(data, direction) GET_DIRECTION((data >> 4), direction)
 #define GET_VALID_DIRECTION(data, direction) GET_DIRECTION(data, direction)
 
-#define SET_WALKED_DIRECTION(direction) SET_DIRECTION(direction) << 4
+#define SET_WALKED_DIRECTION(direction) (SET_DIRECTION(direction) << 4)
 #define SET_VALID_DIRECTION(direction) SET_DIRECTION(direction)
 
 #define COR_TO_INDEX(x, y, scale_x) (x+(y*scale_x))
@@ -60,5 +60,23 @@ typedef struct
     actor_t *stack;
 }actor_stack_t;
 
+
+void write_maze_to_screenvalues(maze_t *maze, 
+                                uint16_t *screen_values,
+                                uint16_t wall_color, 
+                                uint16_t screen_length,
+                                uint16_t screen_hight);
+
+void generate_maze( pos_t    squares_x,
+                    pos_t    squares_y,
+                    uint16_t size_x,
+                    uint16_t size_y,
+                    maze_t   *maze,
+                    pos_t    start_x,
+                    pos_t    start_y,
+                    pos_t    end_x,
+                    pos_t    end_y);
+
+void init_maze(maze_t *maze);
 
 #endif

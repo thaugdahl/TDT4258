@@ -11,13 +11,6 @@
 
 #include "display.h"
 
-struct fb_var_screeninfo screen_info;
-int screensize_bytes;
-int fbfd;
-
-uint16_t *screen_values;
-struct fb_copyarea rect;
-
 
 /**
 * @brief initilize the screen
@@ -25,35 +18,27 @@ struct fb_copyarea rect;
 *
 */
 
-void screen_init()
+void screen_init(int *screensize_bytes, 
+				 int *fbfd,
+				 struct fb_var_screeninfo *screeninfo)
 {
 	printf("screen initalizing\n");
 
-	rect.dx = 0;
-	rect.dy = 0;
-	rect.width = 320;
-	rect.height = 240;
+    *fbfd = open("/dev/fb0", O_RDWR);
+	printf("fbfd value: %d\n", *fbfd);
 
-	player_area.dx 		= 0;
-	player_area.dy 		= 220;
-	player_area.width 	= 320;
-	player_area.height 	= 20;
-
-    fbfd = open("/dev/fb0", O_RDWR);
-	printf("fbfd value: %d\n", fbfd);
-
-	if (fbfd == -1) {
+	if (*fbfd == -1) {
      	perror("Error: cannot open framebuffer device");
      	exit(EXIT_FAILURE);
 	}
 
-	if(ioctl(fbfd, FBIOGET_VSCREENINFO, &screen_info) == -1){
+	if(ioctl(*fbfd, FBIOGET_VSCREENINFO, screeninfo) == -1){
 		perror("Error: failed to get screen info\n");
 		exit(EXIT_FAILURE);
 	}
 
-   	screensize_bytes = SCREEN_LENGTH * screen_info.bits_per_pixel/8;
-	screen_values = (uint16_t*) mmap(NULL, screensize_bytes, PROT_READ | PROT_WRITE, MAP_SHARED, fbfd, 0);
+   	*screensize_bytes = SCREEN_LENGTH * screeninfo->bits_per_pixel/8;
+	//screen_values = (uint16_t*) mmap(NULL, *screensize_bytes, PROT_READ | PROT_WRITE, MAP_SHARED, *fbfd, 0);
     printf("screen initialized successfully\n");
 }
 
@@ -63,24 +48,23 @@ void screen_init()
 * Values written to screen_values[] are printed on screen
 */
 
-void screen_refresh()
+void screen_refresh(int fbfd, struct fb_copyarea *copyarea)
 {
-	ioctl(fbfd, 0x4680, &rect);
+	ioctl(fbfd, 0x4680, copyarea);
 }
 
-void player_area_refresh()
-{
-	ioctl(fbfd, 0x4680, &player_area);
-}
-
-void player_area_fill(uint16_t value)
+void player_area_fill(uint16_t value, 
+					  uint16_t *screen_values, 
+					  int fbfd, 
+					  struct fb_copyarea *player_area,
+					  int screensize_bytes)
 {
 	uint32_t i = 0;
 	for(i=0; i<screensize_bytes; i++){
 		screen_values[i]=value;
 	}
 
-	player_area_refresh();
+	screen_refresh(fbfd, player_area);
 }
 
 /**
@@ -90,7 +74,11 @@ void player_area_fill(uint16_t value)
 * Fills all pixels with the color that is given in the parameter value
 */
 
-void screen_fill(uint16_t value)
+void screen_fill(	uint16_t value, 
+				 	uint16_t *screen_values, 
+				 	int fbfd, 
+					struct fb_copyarea *copyarea,
+					int screensize_bytes)
 {
 	uint32_t i = 0;
 
@@ -99,10 +87,17 @@ void screen_fill(uint16_t value)
 	}
 
 	//command driver to update display
-	screen_refresh();
+	screen_refresh(fbfd, copyarea);
 }
 
-void rectangle_draw(int x_pos, int y_pos, int width, int height, uint16_t color)
+void rectangle_draw(int x_pos, 
+					int y_pos, 
+					int width, 
+					int height, 
+					uint16_t color, 
+					uint16_t *screen_values,
+					int fbfd, 
+					struct fb_copyarea *copyarea)
 {
 	int y;
 	int x;
@@ -121,45 +116,6 @@ void rectangle_draw(int x_pos, int y_pos, int width, int height, uint16_t color)
 		}
 	}
 
-	screen_refresh();
+	screen_refresh(fbfd, copyarea);
 }
 
-/// !!!!!!!!!!!!!!!!!!!!! for testing
-
-	rect.dx = 0;
-	rect.dy = 0;
-	rect.width = 320;
-	rect.height = 240;
-
-	player_area.dx 		= &rect.dx;
-	player_area.dy 		= &rect.dy;
-	player_area.width 	= 320;
-	player_area.height 	= 20;
-
-
-
-struct player = {
-	x
-	y
-	x_next
-	y_next
-}
-	struct fb_copyarea player_area;
-player_area.dx = &player.x
-player.x_next = x+dx
-
-if player.x_next = vegg
-player.x_next = player.x
-break;
-else
-figure_draw(&player)
-	screen_values -= player.x
-	screen_values += player.x_next
-
-#define vei = 0
-#define vegg = 1
-
-0001101010010
-000111001010
-
-color = 0xff*(~pixel)

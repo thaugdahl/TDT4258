@@ -1,0 +1,61 @@
+start heresy
+
+------------------
+target: game.clean
+------------------
+
+make[1]: Entering directory `/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/local_src/game-1.0'
+rm -f  game *.o
+make[1]: Leaving directory `/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/local_src/game-1.0'
+Deleting stage files:
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/state/game.compile
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/state/game.extract
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/state/game.extract.post
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/state/game.get
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/state/game.prepare
+
+Deleting src dir:
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/game
+
+
+----------------
+target: game.get
+----------------
+
+finished target game.get
+
+--------------------
+target: game.extract
+--------------------
+
+local directory instead of tar file, linking build dir
+patchin: no patches found
+finished target game.extract
+
+-------------------------
+target: game.extract.post
+-------------------------
+
+patchin: fixup:
+patchin: fixup: done
+
+finished target game.extract.post
+
+--------------------
+target: game.prepare
+--------------------
+
+prepare stage disabled.
+finished target game.prepare
+
+--------------------
+target: game.compile
+--------------------
+
+make[1]: Entering directory `/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/local_src/game-1.0'
+arm-cortexm3-uclinuxeabi-gcc -O2 -g -Wall    -c -o display.o display.c
+arm-cortexm3-uclinuxeabi-gcc -O2 -g -Wall    -c -o henrik_test.o henrik_test.c
+arm-cortexm3-uclinuxeabi-gcc -O2 -g -Wall  game.c display.o henrik_test.o  -o game 
+make[1]: Leaving directory `/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/local_src/game-1.0'
+finished target game.compile
+Compile successful ? (y/n)
