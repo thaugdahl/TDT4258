@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+#include <linux/fb.h>
+
+
 #define TIMEOUT 10
 
 #define GET_DIRECTION(data, direction) (data  & (0b1 << direction))
@@ -28,6 +31,8 @@ enum direction {
 
 typedef uint8_t pos_t;
 
+typedef uint8_t direction_t;
+
 typedef struct
 {
     uint8_t paths;  // divided into two categoris, valid and walked
@@ -46,37 +51,61 @@ typedef struct
 {
     uint16_t size_x; //side length for x 
     uint16_t size_y; //side length for y 
+    uint16_t actor_size_x; //x side size for the actor
+    uint16_t actor_size_y; //y side size for the actor
     actor_t  start_pos; //x, y location for the start position
-    pos_t    length_x; // number of x squares
-    pos_t    length_y; // number of y squares
+    pos_t    length_x; //number of x squares
+    pos_t    length_y; //number of y squares
     square_t *squares; //each square in the maze
+    uint16_t BG_color; //the background color for the maze
+    uint16_t actor_color; //the actor color
+    uint16_t wall_color; //the wall color for the maze
 }maze_t;
 
 
 typedef struct 
 {
-    uint16_t MAX;
-    int head;
-    actor_t *stack;
+    uint16_t MAX; //max length of the stack
+    int head; // the current top index of the stack
+    actor_t *stack; //the stack array
 }actor_stack_t;
 
 
 void write_maze_to_screenvalues(maze_t *maze, 
                                 uint16_t *screen_values,
-                                uint16_t wall_color, 
-                                uint16_t screen_length,
-                                uint16_t screen_hight);
+                                uint16_t screen_length);
 
 void generate_maze( pos_t    squares_x,
                     pos_t    squares_y,
                     uint16_t size_x,
                     uint16_t size_y,
+                    uint16_t actor_size_x,
+                    uint16_t actor_size_y,
                     maze_t   *maze,
                     pos_t    start_x,
                     pos_t    start_y,
                     pos_t    end_x,
-                    pos_t    end_y);
+                    pos_t    end_y,
+                    uint16_t BG_color,
+                    uint16_t actor_color,
+                    uint16_t wall_color);
 
 void init_maze(maze_t *maze);
+
+void _move_actor_ignore_walls_(actor_t *actor,
+                               maze_t *maze, 
+                               direction_t direction,
+                               uint16_t *screen_values,
+                               uint16_t screen_length,
+                               int fbfd);
+
+int move_actor(actor_t *actor,
+                maze_t *maze, 
+                direction_t direction,
+                uint16_t *screen_values,
+                uint16_t screen_length,
+                int fbfd);
+
+
 
 #endif

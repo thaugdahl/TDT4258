@@ -47,6 +47,49 @@ void 😮()
  *
  */
 
+direction_t get_direction_from_terminal(void)
+{
+	char direction_from_scanf;
+	direction_t direction;
+	uint8_t found_direction = 0;
+	while (found_direction == 0)
+	{
+		// collect direction
+		printf("select direction(w,a,s,d): \n");
+		scanf("%c", &direction_from_scanf);
+
+		// check if it is a valid direction
+		switch (direction_from_scanf)
+		{
+		case 'w':
+			printf("moving up");
+			direction = UP;
+			found_direction = 1;
+			break;
+		case 's':
+			printf("moving down");
+			direction = DOWN;
+			found_direction = 1;
+			break;
+		case 'a':
+			printf("moving left");
+			direction = LEFT;
+			found_direction = 1;
+			break;
+		case 'd':
+			printf("moving right");
+			direction = RIGHT;
+			found_direction = 1;
+			break;	
+		default:
+			printf("select valid dirction!\n");
+			found_direction = 0;
+			break;
+		}
+	}
+	return direction;
+}
+
 int main(int argc, char *argv[])
 {
 	printf("Hello World, I'm game!\n\n");
@@ -59,8 +102,7 @@ int main(int argc, char *argv[])
 	struct fb_copyarea full_screen_area;
 	int fbfd;
 	maze_t maze;
-	int game_loop = 0;
-
+	int game_loop = 1;
 	//set values constants
 	full_screen_area.dx = 0;
 	full_screen_area.dy = 0;
@@ -89,7 +131,10 @@ int main(int argc, char *argv[])
 	sleep(1);
 	screen_refresh(fbfd, &full_screen_area);
 	sleep(2);
-    generate_maze(5, 5, 10, 10, &maze, 1,1,3,3);
+	printf("hey dad im a maze\n");
+	sleep(5);
+    generate_maze(6, 7, 10, 10, 2, 2, &maze, 1, 1, 3, 3, 0x0000, 0xffff, 0xffff);
+	actor_t player = maze.start_pos;
 	printf("\nMaze generated, let's print this shit\n");
 
 	//maze_t test_maze;
@@ -103,23 +148,30 @@ int main(int argc, char *argv[])
     //test_maze.squares = malloc(10*10*sizeof(square_t));
 	//printf("time to init the test\n");
 	//init_maze(&test_maze);
+
+
+	screen_fill(maze.BG_color, screen_values, fbfd, &full_screen_area, screensize_bytes);
+
 	printf("time to write the test to the screen\n");
-	write_maze_to_screenvalues(&maze, screen_values, 0xffff, SCREEN_SIZE_X, SCREEN_SIZE_Y);
+	write_maze_to_screenvalues(&maze, screen_values, SCREEN_SIZE_X);
 
 	printf("This shit printed\n");
 
 	screen_refresh(fbfd, &full_screen_area);
 
-	sleep(10);
+	sleep(1);
 	
 	//game loop
 	// TODO: create game mechanics
 	while (game_loop == 1)
 	{
 		sleep(1);
-		//¯\_(ツ)_/¯
-		//😮();
-		
+		move_actor(&player,
+								  &maze, 
+								  get_direction_from_terminal(),
+								  screen_values,
+								  SCREEN_SIZE_X,
+								  fbfd);
 	}
 
 	// clean exit
