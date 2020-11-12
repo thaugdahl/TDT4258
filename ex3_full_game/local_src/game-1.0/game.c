@@ -26,12 +26,20 @@ void 😮()
 //! Remember to comment everything!!!!!!!
 
 /**
+ * 
+ * final things todo:
+ * 		TODO: implement game controller (required)
+ * 		TODO: create generic function for writing figures (required)
+ * 		TODO: write in  overleaf! (required)
+ * 		TODO: create goal (required)
+ * 	*	TODO: create simple menu to start game (optional)
+ * 		TODO: rask clean up, legge til funksjons forklaringer
+ * 
  * // TODO: create a display.c/.h (required)
  *  	// TODO: create defines for screen size (required)
- * 		TODO: create function for writing to display (required)
- * 		TODO: create generic function for writing figures (required)
+ * 		// TODO: create function for writing to display (required)
  *
- * TODO: implement game controller (required)
+ * 
  *
  * // TODO: choose game (required)
  * 		?Game = maze game => simple and fun for the family ?
@@ -43,7 +51,7 @@ void 😮()
  * * TODO: create menu
  *
  * * TODO: create scoreboard
- * 		* TODO: create timer for the maze
+ * 		* TODO: create timer
  *
  */
 
@@ -133,6 +141,8 @@ int main(int argc, char *argv[])
 	sleep(2);
 	printf("hey dad im a maze\n");
 	sleep(5);
+
+	// Currently, maximum size is: 6x7 tiles
     generate_maze(6, 7, 10, 10, 2, 2, &maze, 1, 1, 3, 3, 0x0000, 0xffff, 0xffff);
 	actor_t player = maze.start_pos;
 	printf("\nMaze generated, let's print this shit\n");

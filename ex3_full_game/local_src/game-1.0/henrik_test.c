@@ -378,7 +378,7 @@ void generate_maze( pos_t    squares_x,
         exit(EXIT_FAILURE);
     }
     
-    printf("maze set\n");
+    printf("maze set: %p\n",maze->squares);
     init_maze(maze);
 
     actor_stack_t path_stack;
