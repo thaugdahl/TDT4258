@@ -52,9 +52,7 @@ void stack_create(actor_stack_t *stack, uint16_t top)
 {
     stack->head = -1;
     stack->MAX = top;
-    printf("stack creation in progress\n");
     stack->stack = malloc(top*sizeof(actor_t));
-    printf("I suck at make stack\n");
     if(stack->stack == NULL)
     {
         printf("stack creation failed\n");
@@ -190,7 +188,6 @@ void _debug_print(maze_t *maze)
 int goto_next_square( maze_t *maze,
                       actor_stack_t *path_stack)
 {
-    printf("goto next square daddy\n");
     actor_stack_t new_path_stack;
     stack_create(&new_path_stack, 4);
     uint8_t index = COR_TO_INDEX(stack_read_top(path_stack).x,
@@ -199,7 +196,6 @@ int goto_next_square( maze_t *maze,
     uint8_t test_index;
     actor_t next_square;
     actor_t test_pos;
-    printf("you are a nice stack boy\n");
     // test up
     if(GET_VALID_DIRECTION(maze->squares[index].paths, UP))
     {
@@ -363,6 +359,9 @@ void generate_maze( pos_t    squares_x,
 
     maze->start_pos.x = start_x;
     maze->start_pos.y = start_y;
+
+    maze->end_pos.x = end_x;
+    maze->end_pos.y = end_y;
 
     maze->BG_color    = BG_color;
     maze->wall_color  = wall_color;
@@ -593,6 +592,12 @@ void update_actor_screenvalues(maze_t *maze,
 
 }
 
+/**
+ * fucntion for moving an actor
+ * 
+ * @param return the function retuns an int to identify the sucsess of the function.
+ *               -1 for failed and 1 for found path and 2 for no path found   
+ */
 int move_actor(actor_t *actor,
                maze_t *maze, 
                direction_t direction,
@@ -603,7 +608,7 @@ int move_actor(actor_t *actor,
     // find the translated posistion
     actor_t translated_actor = translate_pos(*actor, direction);
     // check if a new path is found, 0 not checked, 1 found, -1 not found
-    int found_path = 0;
+    int found_path = -1;
     // get the indexes for the actor
     uint16_t actor_index     = COR_TO_INDEX(actor->x, actor->y, maze->length_x);
 
@@ -623,7 +628,7 @@ int move_actor(actor_t *actor,
         found_path = 1;
     }else
     {
-        found_path = -1;
+        found_path = 2;
     }
     
     // return a check code to check the validity of the path

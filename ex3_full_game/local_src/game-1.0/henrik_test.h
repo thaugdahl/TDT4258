@@ -5,6 +5,7 @@
 
 #include <linux/fb.h>
 
+#include "game.h"
 
 #define TIMEOUT 10
 
@@ -22,16 +23,16 @@
 #define VALID_PATH_MASK 0b1111
 #define WALKED_PATH_MASK 0b1111<<4
 
+typedef uint8_t pos_t;
+
+typedef uint8_t direction_t;
+
 enum direction {
     UP = 0,
     RIGHT,
     DOWN,
     LEFT
 };
-
-typedef uint8_t pos_t;
-
-typedef uint8_t direction_t;
 
 typedef struct
 {
@@ -54,6 +55,7 @@ typedef struct
     uint16_t actor_size_x; //x side size for the actor
     uint16_t actor_size_y; //y side size for the actor
     actor_t  start_pos; //x, y location for the start position
+    actor_t  end_pos; //x, y location for the goal
     pos_t    length_x; //number of x squares
     pos_t    length_y; //number of y squares
     square_t *squares; //each square in the maze
