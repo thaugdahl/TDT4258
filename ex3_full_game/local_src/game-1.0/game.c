@@ -121,6 +121,8 @@ int main(int argc, char *argv[])
 	// TODO: check if it works on uClinux
 	srand(time(0));
 
+	// TODO: Initialisere knapper. Kan vi bruke mmap for å ha tilgang til knappene?
+	
 	//init screeen
 	screen_init(&screensize_bytes, 
 				&fbfd,

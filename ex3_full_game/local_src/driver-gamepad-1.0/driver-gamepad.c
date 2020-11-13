@@ -70,8 +70,8 @@ static int __init template_init(void)
 		printk("Device allocation success\n");
 	}
 		
-	request_irq(GPIO_EVEN_IRQ, (irq_handler_t)gpio_interrupt_handler, 0, DRIVER_NAME, &gamepad_cdev);
-    request_irq(GPIO_ODD_IRQ, (irq_handler_t)gpio_interrupt_handler, 0, DRIVER_NAME, &gamepad_cdev);
+	request_irq(GPIO_EVEN_IRQ, (irq_handler_t)gpio_interrupt_handler, 0, DRIVER_NAME, &my_cdev);
+    request_irq(GPIO_ODD_IRQ, (irq_handler_t)gpio_interrupt_handler, 0, DRIVER_NAME, &my_cdev);
 
 	*my_cdev = cdev_alloc();
 	my_cdev->ops = &fops;
