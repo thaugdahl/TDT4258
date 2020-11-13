@@ -345,17 +345,48 @@ void generate_maze( pos_t    squares_x,
                     pos_t    end_y,
                     uint16_t BG_color,
                     uint16_t actor_color,
-                    uint16_t wall_color)
+                    uint16_t wall_color,
+                    uint16_t goal_color)
 {
     // start of program
     maze->length_x = squares_x;
     maze->length_y = squares_y;
 
-    maze->size_x = size_x;
-    maze->size_y = size_y;
-
-    maze->actor_size_x = actor_size_x;
-    maze->actor_size_y = actor_size_y;
+    // check if the size of the wall is larger then the minimun 
+        // x side
+    if (size_x > MIN_SIZE_IN_PIXEL)
+    {
+        maze->size_x = size_x;
+    }else
+    {
+       maze->size_x = MIN_SIZE_IN_PIXEL;
+    }
+        // y side
+    if (size_y > MIN_SIZE_IN_PIXEL)
+    {
+        maze->size_y = size_y;
+    }else
+    {
+       maze->size_y = MIN_SIZE_IN_PIXEL;
+    }
+    
+    // check if the actor is smaller than the square
+        // x side
+    if (actor_size_x <= (maze->size_x - 1))
+    {
+        maze->actor_size_x = actor_size_x;
+    }else
+    {
+        maze->actor_size_x = (maze->size_x - 1);
+    }
+        // y side
+    if (actor_size_y <= (maze->size_y - 1))
+    {
+        maze->actor_size_y = actor_size_y;
+    }else
+    {
+        maze->actor_size_y = (maze->size_y - 1);
+    }
 
     maze->start_pos.x = start_x;
     maze->start_pos.y = start_y;
@@ -366,6 +397,7 @@ void generate_maze( pos_t    squares_x,
     maze->BG_color    = BG_color;
     maze->wall_color  = wall_color;
     maze->actor_color = actor_color;
+    maze->goal_color  = goal_color; 
 
     printf("setting maze\n");
     sleep(1);
@@ -454,7 +486,8 @@ void write_maze_to_screenvalues(maze_t *maze,
                                 uint16_t screen_length)
 {
     uint16_t y;
-     uint16_t x;
+    uint16_t x;
+    printf("One, ha ha ha ha\n");
     for (y = 0; y < maze->length_y; y++)
     {
         for (x = 0; x < maze->length_x; x++)
@@ -510,12 +543,13 @@ void write_maze_to_screenvalues(maze_t *maze,
         }
     }
 
+    // print the player in the start position
     uint16_t index;
     uint16_t actor_start_x = ((maze->start_pos.x * maze->size_x) + ((maze->size_x - maze->actor_size_x) / 2));
     uint16_t actor_start_y = ((maze->start_pos.y * maze->size_y) + ((maze->size_y - maze->actor_size_y) / 2));
     uint16_t actor_end_x   = actor_start_x + maze->actor_size_x;
     uint16_t actor_end_y   = actor_start_y + maze->actor_size_y;
-
+    printf("heeeeeere's jonny!\n");
     for ( x = actor_start_x; x < actor_end_x; x++)
     {
         for (y = actor_start_y; y < actor_end_y; y++)
@@ -524,6 +558,8 @@ void write_maze_to_screenvalues(maze_t *maze,
             screen_values[index] = maze->actor_color;
         }
     }
+    printf("Tw, ha ha ha ha\n");
+    // print the goal
 }
 
 void update_actor_screenvalues(maze_t *maze,

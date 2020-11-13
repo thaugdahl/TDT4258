@@ -1,10 +1,27 @@
-#include <stdint.h>
 
 // GPIO
-
 #define GPIO_PA_BASE 0x40006000
 #define GPIO_PB_BASE 0x40006024
 #define GPIO_PC_BASE 0x40006048
+#define GPIO_INT_BASE 0x40006100
+
+#define GPIO_CTRL_OFFSET        0x00
+#define GPIO_MODEL_OFFSET       0x04
+#define GPIO_MODEH_OFFSET       0x08
+#define GPIO_DOUT_OFFSET        0x0c
+#define GPIO_DOUTSET_OFFSET     0x10
+#define GPIO_DOUTCLR_OFFSET     0x14
+#define GPIO_DOUTTGL_OFFSET     0x18
+#define GPIO_DIN_OFFSET         0x1c
+#define GPIO_PINLOCKN_OFFSET    0x20
+
+#define GPIO_EXTIPSELL_OFFSET   0x00
+#define GPIO_EXTIPSELH_OFFSET   0x04
+#define GPIO_EXTIRISE_OFFSET    0x08
+#define GPIO_EXTIFALL_OFFSET    0x0c
+#define GPIO_IEN_OFFSET         0x10
+#define GPIO_IF_OFFSET          0x14
+#define GPIO_IFC_OFFSET         0x1c
 
 #define GPIO_PA_CTRL     ((volatile uint32_t*)(GPIO_PA_BASE + 0x00))
 #define GPIO_PA_MODEL    ((volatile uint32_t*)(GPIO_PA_BASE + 0x04))
@@ -41,6 +58,7 @@
 #define GPIO_EXTIRISE  ((volatile uint32_t*)(GPIO_PA_BASE + 0x108))
 #define GPIO_EXTIFALL  ((volatile uint32_t*)(GPIO_PA_BASE + 0x10c))
 #define GPIO_IEN       ((volatile uint32_t*)(GPIO_PA_BASE + 0x110))
+#define GPIO_IF        ((volatile uint32_t*)(GPIO_PA_BASE + 0x114))
 #define GPIO_IFC       ((volatile uint32_t*)(GPIO_PA_BASE + 0x11c))
 
 // CMU

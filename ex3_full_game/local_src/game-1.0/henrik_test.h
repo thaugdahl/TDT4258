@@ -8,6 +8,7 @@
 #include "game.h"
 
 #define TIMEOUT 10
+#define MIN_SIZE_IN_PIXEL 4
 
 #define GET_DIRECTION(data, direction) (data  & (0b1 << direction))
 #define SET_DIRECTION(direction) (0b1 << direction)
@@ -62,6 +63,7 @@ typedef struct
     uint16_t BG_color; //the background color for the maze
     uint16_t actor_color; //the actor color
     uint16_t wall_color; //the wall color for the maze
+    uint16_t goal_color; // the color of the goal in game
 }maze_t;
 
 
@@ -90,7 +92,8 @@ void generate_maze( pos_t    squares_x,
                     pos_t    end_y,
                     uint16_t BG_color,
                     uint16_t actor_color,
-                    uint16_t wall_color);
+                    uint16_t wall_color,
+                    uint16_t goal_color);
 
 void init_maze(maze_t *maze);
 

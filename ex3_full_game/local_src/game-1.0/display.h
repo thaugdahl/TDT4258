@@ -3,7 +3,14 @@
 
 #define SCREEN_SIZE_X 320
 #define SCREEN_SIZE_Y 240
+
+// The total number of pixels in the screen
 #define SCREEN_LENGTH (SCREEN_SIZE_X * SCREEN_SIZE_Y)
+
+// convert rgb to an 16 bit unsigned integer
+// todo: test the function
+#define rgb_to_16_bit_color(r,g,b) ((b & 0b11111) | (g & 0b111111) << 5 | (r & 0b11111) << 11)
+
 
 void screen_init(int *screensize_bytes, 
 				 int *fbfd,

@@ -11,7 +11,6 @@
 
 #include "display.h"
 
-
 /**
 * @brief initilize the screen
 *
@@ -66,6 +65,17 @@ void player_area_fill(uint16_t value,
 
 	screen_refresh(fbfd, player_area);
 }
+
+/*
+uint16_t rgb_to_16_bit_color(int red, int green, int blue) {
+	uint16_t color = 0;
+	color |= blue;
+	color |= green << 5;
+	color |= red << 11;
+	return color;
+}
+*/
+
 
 /**
 * @brief fill screen
