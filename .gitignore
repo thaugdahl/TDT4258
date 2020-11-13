@@ -63,3 +63,4 @@ ex2_support/*.bin
 /linux-3.12-rc4
 /.vscode
 /include
+/ex3_full_game/local_src/.vscode
