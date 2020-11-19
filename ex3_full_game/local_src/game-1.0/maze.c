@@ -128,7 +128,7 @@ uint8_t pos_to_dir(actor_t last_actor, actor_t next_actor)
     }
 }
 
-void init_maze(maze_t *maze)
+void clean_maze(maze_t *maze)
 {
     uint8_t index;
     pos_t y;
@@ -171,9 +171,9 @@ int goto_next_square( maze_t *maze,
 {
     actor_stack_t new_path_stack;
     stack_create(&new_path_stack, 4);
-    uint8_t index = COR_TO_INDEX(stack_read_top(path_stack).x,
-                                 stack_read_top(path_stack).y,
-                                 maze->length_x);
+    //uint8_t index = COR_TO_INDEX(stack_read_top(path_stack).x,
+    //                             stack_read_top(path_stack).y,
+    //                             maze->length_x);
     uint8_t test_index;
     actor_t next_square;
     actor_t test_pos;
@@ -249,7 +249,6 @@ int goto_next_square( maze_t *maze,
         }
     }
 
-    printf("next: x:%d y:%d\n", next_square.x,next_square.y);
     if (((next_square.x == stack_read_top(path_stack).x) &&
          (next_square.y == stack_read_top(path_stack).y)) ||
         ((next_square.x >= maze->length_y) &&
@@ -278,6 +277,16 @@ int goto_next_square( maze_t *maze,
     stack_delete(&new_path_stack);
 
     return 1;
+}
+
+void init_maze( maze_t * maze,
+                uint16_t squares_x,
+                uint16_t squares_y)
+{
+    maze->length_x = squares_x;
+    maze->length_y = squares_y;
+    maze->squares = malloc(squares_x*squares_y*sizeof(square_t));
+    clean_maze(maze);
 }
 
 void generate_maze( pos_t    squares_x,
@@ -348,8 +357,6 @@ void generate_maze( pos_t    squares_x,
     maze->goal_color  = goal_color; 
 
     printf("setting maze\n");
-    sleep(1);
-    maze->squares = malloc(squares_x*squares_y*sizeof(square_t));
 
     if (maze->squares == NULL)
     {
@@ -358,7 +365,7 @@ void generate_maze( pos_t    squares_x,
     }
     
     printf("maze set: %p\n",maze->squares);
-    init_maze(maze);
+    clean_maze(maze);
 
     actor_stack_t path_stack;
     stack_create(&path_stack, squares_x*squares_y);
@@ -435,15 +442,12 @@ void write_maze_to_screenvalues(maze_t *maze,
 {
     uint16_t y;
     uint16_t x;
-    printf("One, ha ha ha ha\n");
     for (y = 0; y < maze->length_y; y++)
     {
         for (x = 0; x < maze->length_x; x++)
         {
             uint32_t maze_index = COR_TO_INDEX(x,y,maze->length_x);
             uint8_t paths = (maze->squares[maze_index]) >> 4;
-            printf("x:%d y:%d index:%d paths:%x\n", x, y, maze_index, paths);
-
             if (GET_DIRECTION(paths, UP) != SET_DIRECTION(UP))
             {
                 uint16_t start_x = x * maze->size_x;
@@ -497,7 +501,6 @@ void write_maze_to_screenvalues(maze_t *maze,
     uint16_t actor_start_y = ((maze->start_pos.y * maze->size_y) + ((maze->size_y - maze->actor_size_y) / 2));
     uint16_t actor_end_x   = actor_start_x + maze->actor_size_x;
     uint16_t actor_end_y   = actor_start_y + maze->actor_size_y;
-    printf("heeeeeere's jonny!\n");
     for ( x = actor_start_x; x < actor_end_x; x++)
     {
         for (y = actor_start_y; y < actor_end_y; y++)
@@ -506,7 +509,6 @@ void write_maze_to_screenvalues(maze_t *maze,
             screen_values[index] = maze->actor_color;
         }
     }
-    printf("Tw, ha ha ha ha\n");
     // print the goal
 }
 
@@ -646,4 +648,26 @@ void _move_actor_ignore_walls_(actor_t *actor,
         *actor = translated_actor;
     }
 }
- 
+
+
+void draw_goal( maze_t * maze,
+                uint16_t *screen_values,
+                uint16_t screen_length_x)
+{
+    uint16_t x;
+    uint16_t y;
+    uint16_t start_x = maze->end_pos.x * maze->size_x + 1;
+    uint16_t start_y = maze->end_pos.y * maze->size_y + 1;
+    uint16_t end_x = start_x + maze->size_x - 1;
+    uint16_t end_y = start_y + maze->size_y - 1;
+    uint16_t index;
+
+    for ( x = start_x; x < end_x; x++)
+    {
+        for (y = start_y; y < end_y; y++)
+        {
+            index = COR_TO_INDEX(x,y,screen_length_x);
+            screen_values[index] = maze->goal_color;
+        }
+    }   
+}

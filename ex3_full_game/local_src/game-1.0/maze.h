@@ -104,7 +104,11 @@ void generate_maze( pos_t    squares_x,
                     uint16_t wall_color,
                     uint16_t goal_color);
 
-void init_maze(maze_t *maze);
+void clean_maze(maze_t *maze);
+
+void init_maze( maze_t * maze,
+                uint16_t squares_x,
+                uint16_t squares_y);
 
 void _move_actor_ignore_walls_(actor_t *actor,
                                maze_t *maze, 
@@ -113,13 +117,15 @@ void _move_actor_ignore_walls_(actor_t *actor,
                                uint16_t screen_length,
                                int fbfd);
 
-int move_actor(actor_t *actor,
+int move_actor( actor_t *actor,
                 maze_t *maze, 
                 direction_t direction,
                 uint16_t *screen_values,
                 uint16_t screen_length,
                 int fbfd);
 
-
+void draw_goal( maze_t * maze,
+                uint16_t *screen_values,
+                uint16_t screen_length_x);
 
 #endif

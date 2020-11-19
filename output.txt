@@ -1,61 +1,67 @@
 start heresy
 
-------------------
-target: game.clean
-------------------
+----------------------------
+target: driver-gamepad.clean
+----------------------------
 
-make[1]: Entering directory `/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/local_src/game-1.0'
-rm -f  game *.o
-make[1]: Leaving directory `/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/local_src/game-1.0'
 Deleting stage files:
-/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/state/game.compile
-/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/state/game.extract
-/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/state/game.extract.post
-/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/state/game.get
-/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/state/game.prepare
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/state/driver-gamepad.extract
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/state/driver-gamepad.extract.post
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/state/driver-gamepad.get
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/state/driver-gamepad.prepare
 
 Deleting src dir:
-/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/game
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/driver-gamepad-1.0
 
 
-----------------
-target: game.get
-----------------
+--------------------------
+target: driver-gamepad.get
+--------------------------
 
-finished target game.get
+finished target driver-gamepad.get
 
---------------------
-target: game.extract
---------------------
+------------------------------
+target: driver-gamepad.extract
+------------------------------
 
-local directory instead of tar file, linking build dir
+local directory using lndir
 patchin: no patches found
-finished target game.extract
+finished target driver-gamepad.extract
 
--------------------------
-target: game.extract.post
--------------------------
+-----------------------------------
+target: driver-gamepad.extract.post
+-----------------------------------
 
 patchin: fixup:
 patchin: fixup: done
 
-finished target game.extract.post
+finished target driver-gamepad.extract.post
 
---------------------
-target: game.prepare
---------------------
+------------------------------
+target: driver-gamepad.prepare
+------------------------------
 
-prepare stage disabled.
-finished target game.prepare
+finished target driver-gamepad.prepare
 
---------------------
-target: game.compile
---------------------
+------------------------------
+target: driver-gamepad.compile
+------------------------------
 
-make[1]: Entering directory `/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/local_src/game-1.0'
-arm-cortexm3-uclinuxeabi-gcc -O2 -g -Wall    -c -o display.o display.c
-arm-cortexm3-uclinuxeabi-gcc -O2 -g -Wall    -c -o henrik_test.o henrik_test.c
-arm-cortexm3-uclinuxeabi-gcc -O2 -g -Wall  game.c display.o henrik_test.o  -o game 
-make[1]: Leaving directory `/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/local_src/game-1.0'
-finished target game.compile
+PATH=/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/sysroot-cross/bin:/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/sysroot-cross/sbin:$PATH KCONFIG_NOTIMESTAMP=1 pkg_wrapper_blacklist="TARGET_HARDEN_STACK TARGET_HARDEN_FORTIFY TARGET_HARDEN_RELRO TARGET_HARDEN_BINDNOW TARGET_HARDEN_PIE" make -j16 V=0 ARCH=arm CROSS_COMPILE=arm-cortexm3-uclinuxeabi- INSTALL_MOD_PATH=/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/packages/linux-3.12-rc4 PTX_KERNEL_DIR=/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/linux-3.12-rc4  DEPMOD=/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/sysroot-host/sbin/depmod \
+		-C /home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/linux-3.12-rc4 \
+		M=/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/driver-gamepad-1.0 \
+		modules
+make[1]: Entering directory `/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/linux-3.12-rc4'
+  CC [M]  /home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/driver-gamepad-1.0/driver-gamepad.o
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/driver-gamepad-1.0/driver-gamepad.c: In function 'template_init':
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/driver-gamepad-1.0/driver-gamepad.c:109:3: warning: format '%x' expects argument of type 'unsigned int', but argument 2 has type 'void *' [-Wformat]
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/driver-gamepad-1.0/driver-gamepad.c:114:3: warning: format '%x' expects argument of type 'unsigned int', but argument 2 has type 'void *' [-Wformat]
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/driver-gamepad-1.0/driver-gamepad.c:154:70: error: 'DEVIE_NAME' undeclared (first use in this function)
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/driver-gamepad-1.0/driver-gamepad.c:154:70: note: each undeclared identifier is reported only once for each function it appears in
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/driver-gamepad-1.0/driver-gamepad.c: At top level:
+/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/driver-gamepad-1.0/driver-gamepad.c:220:7: warning: extra tokens at end of #endif directive [enabled by default]
+make[1]: Leaving directory `/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/linux-3.12-rc4'
+pad.o] Error 1
+make[1]: *** [_module_/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/build-target/driver-gamepad-1.0] Error 2
+make: *** [/home/tdt4258/Desktop/support_files/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/state/driver-gamepad.compile] Error 2
 Compile successful ? (y/n)

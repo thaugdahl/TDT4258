@@ -22,7 +22,7 @@ void screen_init(int *screensize_bytes,
 				 struct fb_var_screeninfo *screeninfo)
 {
 	printf("screen initalizing\n");
-
+	
     *fbfd = open("/dev/fb0", O_RDWR);
 	printf("fbfd value: %d\n", *fbfd);
 

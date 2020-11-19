@@ -10,3 +10,4 @@ mount -t sysfs sys /sys
 
 export PATH=$PATH:/sbin:/usr/bin:/bin
 exec /bin/sh
+r

@@ -12,9 +12,10 @@
 #define SW8 (1 << 7)
 
 typedef enum gameState {
-    LOADING,
-    MENU,
-    GAME
+    GAME_NOSTATE,
+    GAME_STARTUP,
+    GAME_RUNNING,
+    GAME_PHINISH
 } gameState;
 
 #endif
