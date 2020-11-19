@@ -14,14 +14,15 @@
 #define SET_DIRECTION(direction) (0b1 << direction)
 
 #define GET_WALKED_DIRECTION(data, direction) GET_DIRECTION((data >> 4), direction)
-#define GET_VALID_DIRECTION(data, direction) GET_DIRECTION(data, direction)
 
 #define SET_WALKED_DIRECTION(direction) (SET_DIRECTION(direction) << 4)
-#define SET_VALID_DIRECTION(direction) SET_DIRECTION(direction)
+
+#define SET_VISITED(data) (data |= 0b1)
+#define CLEAR_VISITED(data) (data &= ~0b1)
+#define GET_VISITED(data) (data & 0b1)
 
 #define COR_TO_INDEX(x, y, scale_x) (x+(y*scale_x))
 
-#define VALID_PATH_MASK 0b1111
 #define WALKED_PATH_MASK 0b1111<<4
 
 typedef uint8_t pos_t;
@@ -35,13 +36,13 @@ enum direction {
     LEFT
 };
 
-typedef struct
-{
-    uint8_t paths;  // divided into two categoris, valid and walked
-                    // valid: first four bits, paths that can be tested
-                    // walked: last four bits, paths that have been tested, and is valid
-    uint8_t visited; // check if the node is visited
-}square_t;
+/**
+ * divided into three categoris, visited, done and walked
+ * visited: first bit, checks if the node has been visited
+ * done: second bit, tells the system the node is complete
+ * walked: last four bits, paths that have been tested, and is valid
+ */
+typedef uint8_t square_t;
 
 typedef struct actor_t
 {

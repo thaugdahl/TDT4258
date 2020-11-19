@@ -138,31 +138,12 @@ void init_maze(maze_t *maze)
         for ( x = 0; x < maze->length_x; x++)
         {
             index = COR_TO_INDEX(x, y, maze->length_x);
-            maze->squares[index].paths = 0b00001111;
-            maze->squares[index].visited = (uint8_t)0;
-
-            if (x == 0)
-            {
-                maze->squares[index].paths &= ~SET_VALID_DIRECTION(LEFT);
-            }
-            else if (x == (maze->length_x - 1))
-            {
-                maze->squares[index].paths &= ~SET_VALID_DIRECTION(RIGHT);
-            }
-
-            if (y == 0)
-            {
-                maze->squares[index].paths &= ~SET_VALID_DIRECTION(UP);
-            }
-            else if (y == (maze->length_y - 1))
-            {
-                maze->squares[index].paths &= ~SET_VALID_DIRECTION(DOWN);
-            }
+            maze->squares[index] = 0;
         }
     }
-    maze->squares[COR_TO_INDEX(maze->start_pos.x, maze->start_pos.y, maze->length_x)].visited = 1;
+    SET_VISITED(maze->squares[COR_TO_INDEX(maze->start_pos.x, maze->start_pos.y, maze->length_x)]);
 }
-
+ 
 void _debug_print(maze_t *maze)
 {
     printf("------------------------\n------------------------\n------------------------\n");
@@ -173,7 +154,7 @@ void _debug_print(maze_t *maze)
         int x;
         for (x = 0; x < maze->length_x; x++)
         {
-            uint8_t visited = maze->squares[COR_TO_INDEX(x,y,maze->length_x)].visited;
+            uint8_t visited = GET_VISITED(maze->squares[COR_TO_INDEX(x,y,maze->length_x)]);
         //    printf("x:%d y:%d v:%d i:%d \n",
         //           x,y,visited&1,COR_TO_INDEX(x,y,maze->length_x));
             if ((visited&0x1) == 1)
@@ -196,78 +177,45 @@ int goto_next_square( maze_t *maze,
     uint8_t test_index;
     actor_t next_square;
     actor_t test_pos;
+    
     // test up
-    if(GET_VALID_DIRECTION(maze->squares[index].paths, UP))
+    test_pos = translate_pos(stack_read_top(path_stack), UP);
+    test_index = COR_TO_INDEX(test_pos.x, test_pos.y, maze->length_x);
+    if ((GET_VISITED(maze->squares[test_index]) == 0) &&
+        (test_pos.x < maze->length_x) &&
+        (test_pos.y < maze->length_y))
     {
-        test_pos = translate_pos(stack_read_top(path_stack), UP);
-        test_index = COR_TO_INDEX(test_pos.x, test_pos.y, maze->length_x);
-        if (((maze->squares[test_index].visited & 1) == 0) &&
-            (test_pos.x < maze->length_x) &&
-            (test_pos.y < maze->length_y))
-        {
-            stack_push(&new_path_stack, test_pos);
-        //    printf("found possible path: x:%d y:%d\n",test_pos.x, test_pos.y);
-        }else
-        {
-            maze->squares[index].paths &= ~SET_VALID_DIRECTION(UP);
-            maze->squares[test_index].paths &= ~SET_VALID_DIRECTION(DOWN);
-        }
+        stack_push(&new_path_stack, test_pos);
     }
 
     // test right
-    if(GET_VALID_DIRECTION(maze->squares[index].paths, RIGHT))
+    test_pos = translate_pos(stack_read_top(path_stack), RIGHT);
+    test_index = COR_TO_INDEX(test_pos.x, test_pos.y, maze->length_x);
+    if ((GET_VISITED(maze->squares[test_index]) == 0) &&
+        (test_pos.x < maze->length_x) &&
+        (test_pos.y < maze->length_y))
     {
-        test_pos = translate_pos(stack_read_top(path_stack), RIGHT);
-        test_index = COR_TO_INDEX(test_pos.x, test_pos.y, maze->length_x);
-        if (((maze->squares[test_index].visited & 1) == 0) &&
-            (test_pos.x < maze->length_x) &&
-            (test_pos.y < maze->length_y))
-        {
-            stack_push(&new_path_stack, test_pos);
-        //    printf("found possible path: x:%d y:%d\n",test_pos.x, test_pos.y);
-
-        }else
-        {
-            maze->squares[index].paths &= ~SET_VALID_DIRECTION(RIGHT);
-            maze->squares[test_index].paths &= ~SET_VALID_DIRECTION(LEFT);
-        }
+        stack_push(&new_path_stack, test_pos);
     }
 
     // test down
-    if(GET_VALID_DIRECTION(maze->squares[index].paths, DOWN))
+    test_pos = translate_pos(stack_read_top(path_stack), DOWN);
+    test_index = COR_TO_INDEX(test_pos.x, test_pos.y, maze->length_x);
+    if ((GET_VISITED(maze->squares[test_index]) == 0) &&
+        (test_pos.x < maze->length_x) &&
+        (test_pos.y < maze->length_y))
     {
-        test_pos = translate_pos(stack_read_top(path_stack), DOWN);
-        test_index = COR_TO_INDEX(test_pos.x, test_pos.y, maze->length_x);
-        if (((maze->squares[test_index].visited & 1) == 0) &&
-            (test_pos.x < maze->length_x) &&
-            (test_pos.y < maze->length_y))
-        {
-            stack_push(&new_path_stack, test_pos);
-        //    printf("found possible path: x:%d y:%d\n",test_pos.x, test_pos.y);
-
-        }else
-        {
-            maze->squares[index].paths &= ~SET_VALID_DIRECTION(DOWN);
-            maze->squares[test_index].paths &= ~SET_VALID_DIRECTION(UP);
-        }
+        stack_push(&new_path_stack, test_pos);
     }
 
     // test left
-    if(GET_VALID_DIRECTION(maze->squares[index].paths, LEFT))
+    test_pos = translate_pos(stack_read_top(path_stack), LEFT);
+    test_index = COR_TO_INDEX(test_pos.x, test_pos.y, maze->length_x);
+    if ((GET_VISITED(maze->squares[test_index]) == 0) &&
+        (test_pos.x < maze->length_x) &&
+        (test_pos.y < maze->length_y))
     {
-        test_pos = translate_pos(stack_read_top(path_stack), LEFT);
-        test_index = COR_TO_INDEX(test_pos.x, test_pos.y, maze->length_x);
-        if (((maze->squares[test_index].visited & 1) == 0) &&
-            (test_pos.x < maze->length_x) &&
-            (test_pos.y < maze->length_y))
-        {
-            stack_push(&new_path_stack, test_pos);
-        //    printf("found possible path: x:%d y:%d\n",test_pos.x, test_pos.y);
-        }else
-        {
-            maze->squares[index].paths &= ~SET_VALID_DIRECTION(LEFT);
-            maze->squares[test_index].paths &= ~SET_VALID_DIRECTION(RIGHT);
-        }
+        stack_push(&new_path_stack, test_pos);
     }
 
     //check len of stack, if 0 then go back
@@ -321,10 +269,10 @@ int goto_next_square( maze_t *maze,
     pos_t last_index = COR_TO_INDEX(stack_read_top(path_stack).x, stack_read_top(path_stack).y, maze->length_x);
     pos_t next_index = COR_TO_INDEX(next_square.x, next_square.y, maze->length_x);
 
-    maze->squares[last_index].paths |= SET_WALKED_DIRECTION(direction_to_new);
-    maze->squares[next_index].paths |= SET_WALKED_DIRECTION(direction_from_new);
+    maze->squares[last_index] |= SET_WALKED_DIRECTION(direction_to_new);
+    maze->squares[next_index] |= SET_WALKED_DIRECTION(direction_from_new);
 
-    maze->squares[next_index].visited = 1;
+    SET_VISITED(maze->squares[next_index]);
 
     stack_push(path_stack, next_square);
     stack_delete(&new_path_stack);
@@ -493,7 +441,7 @@ void write_maze_to_screenvalues(maze_t *maze,
         for (x = 0; x < maze->length_x; x++)
         {
             uint32_t maze_index = COR_TO_INDEX(x,y,maze->length_x);
-            uint8_t paths = (maze->squares[maze_index].paths) >> 4;
+            uint8_t paths = (maze->squares[maze_index]) >> 4;
             printf("x:%d y:%d index:%d paths:%x\n", x, y, maze_index, paths);
 
             if (GET_DIRECTION(paths, UP) != SET_DIRECTION(UP))
@@ -649,7 +597,7 @@ int move_actor(actor_t *actor,
     uint16_t actor_index     = COR_TO_INDEX(actor->x, actor->y, maze->length_x);
 
     //check if the transleted path is a valid path 
-    if(GET_WALKED_DIRECTION(maze->squares[actor_index].paths, direction))
+    if(GET_WALKED_DIRECTION(maze->squares[actor_index], direction))
     {
         //update actor on screen
         update_actor_screenvalues(maze,
