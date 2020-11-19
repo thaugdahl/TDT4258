@@ -9,7 +9,7 @@
 #include <time.h>
 
 #include "display.h"
-#include "henrik_test.h"
+#include "maze.h"
 
 void stack_push(actor_stack_t *stack, actor_t value)
 {
@@ -226,19 +226,19 @@ int goto_next_square( maze_t *maze,
             next_square = stack_pop(&new_path_stack);
         }else
         {
+            // choose the next square randomly
             int new_path_index;
             new_path_index = rand() % (stack_length(&new_path_stack));
-            //printf("new path index:%d\n",new_path_index);
             int i;
             for (i = 0; i < new_path_index; i++)
             {
                 stack_pop(&new_path_stack);
             }
             next_square = stack_pop(&new_path_stack);
-            //stack_remove(&new_path_stack, &next_square, new_path_index);
         }
     }else
     {
+        // no valid path to take, so go one square back and check
         if (stack_length(path_stack) > 1)
         {
             stack_pop(path_stack);

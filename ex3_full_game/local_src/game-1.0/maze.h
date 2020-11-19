@@ -17,13 +17,21 @@
 
 #define SET_WALKED_DIRECTION(direction) (SET_DIRECTION(direction) << 4)
 
-#define SET_VISITED(data) (data |= 0b1)
+#define SET_VISITED(data)   (data |=  0b1)
 #define CLEAR_VISITED(data) (data &= ~0b1)
-#define GET_VISITED(data) (data & 0b1)
+#define GET_VISITED(data)   (data &   0b1)
+
+
+#define SET_DONE(data)   (data |=  (1 << 0b1))
+#define CLEAR_DONE(data) (data &= ~(1 << 0b1))
+#define GET_DONE(data)   (data &   (1 << 0b1))
+
 
 #define COR_TO_INDEX(x, y, scale_x) (x+(y*scale_x))
 
 #define WALKED_PATH_MASK 0b1111<<4
+#define DONE_MASK 0b10
+#define VISITED_MASK 0b1
 
 typedef uint8_t pos_t;
 

@@ -13,9 +13,9 @@
 #include <signal.h>
 
 
-//#include "game.h"
+#include "game.h"
 #include "display.h"
-#include "henrik_test.h"
+#include "maze.h"
 
 /*
 #include <linux/kernel.h>
