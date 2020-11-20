@@ -69,7 +69,6 @@ static FILE* gamepad;
 maze_t maze;
 actor_t player;
 int fbfd;
-volatile int game_loop = 1;
 uint16_t *screen_values;
 int screensize_bytes;
 struct fb_copyarea full_screen_area;
@@ -120,7 +119,7 @@ void gamepad_handler(){
 	if(found_valid_direction_from_gamepad_handler)
 	{
 		// TODO: STOP CHEATING
-		_move_actor_ignore_walls_(	&player,
+		move_actor(	&player,
 				&maze, 
 				direction,
 				screen_values,
@@ -156,8 +155,8 @@ int gamepad_init()
     }
 	int pid = getpid();
 	
-	printf("Mom, I want this pid %d\n",pid);
 	if (fcntl(fileno(gamepad), F_SETOWN, pid) == -1){
+		printf("Mom, I want this pid %d\n",pid);
         printf("Could not get pid, \"We have pid at home\"\npid at home: %x\n", pid);
 		printf("fileno(gamepad)%d\n",fileno(gamepad));
         exit(EXIT_FAILURE);
@@ -196,8 +195,9 @@ int main(int argc, char *argv[])
 	screen_refresh(fbfd, &full_screen_area);
 	init_maze(&maze,8,7);
 	game_state = GAME_STARTUP;
+
 	//game loop
-	while (game_loop == 1)
+	while (1)
 	{
 		switch (game_state)
 		{

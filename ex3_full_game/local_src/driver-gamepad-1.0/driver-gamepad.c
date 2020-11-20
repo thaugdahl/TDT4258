@@ -34,8 +34,8 @@ struct class *cl;
 struct fasync_struct* queue;
 struct cdev my_cdev;
 static void __iomem *mem_gpio_port_c, *mem_gpio_int;
-static int __init template_init(void);
-static void __exit template_exit(void);
+static int __init gamepad_init(void);
+static void __exit gamepad_exit(void);
 
 
 // This is the interrupt handler that will be passed to request_irq as a function pointer
@@ -90,9 +90,8 @@ struct file_operations fops = {
  * Returns 0 on success
 */
 
-static int __init template_init(void)
+static int __init gamepad_init(void)
 {
-
 	printk(KERN_INFO "Hello World, here is your module live on TV. Don't say fuck or bugger >:(.\n");
 	
 	// Allocate memory regions for use by this char device.
@@ -107,24 +106,20 @@ static int __init template_init(void)
 	if (!mem_gpio_port_c) {
 		printk(KERN_WARNING "Fuck! (should be 0x40006048, actual value: 0x%p)\n", mem_gpio_port_c);
 	}
-
 	mem_gpio_int = ioremap_nocache(GPIO_INT_BASE, 0x020);
 	if (!mem_gpio_int) {
 		printk(KERN_WARNING "Bugger! (should be 0x40006100, actual value: 0x%p)\n", mem_gpio_int);
 	}
 	
 	// Setup input pins
-	iowrite32(0x33333333, mem_gpio_port_c + GPIO_MODEL_OFFSET);	// Setup button pins for input as done in previous exercises
-	iowrite32(0xFF, mem_gpio_port_c + GPIO_DOUT_OFFSET);		// Pullup
-
-	printk(KERN_INFO "Button input pins are set up\n");
+	iowrite32(0x33333333, mem_gpio_port_c + GPIO_MODEL_OFFSET);
+	iowrite32(0xFF, mem_gpio_port_c + GPIO_DOUT_OFFSET);	
 	
 	// Setup interrupt registers
 	iowrite32(0x22222222, mem_gpio_int + GPIO_EXTIPSELL_OFFSET);
-	iowrite32(0xFF, mem_gpio_int + GPIO_EXTIFALL_OFFSET);		// Falling edge
-	iowrite32(0xFFFF, mem_gpio_int + GPIO_IFC_OFFSET);			// Clear flags
-	iowrite32(0x00FF, mem_gpio_int + GPIO_IEN_OFFSET);			// Interrupt enabled
-	printk(KERN_INFO "Interrupts for button-pins are set up\n");
+	iowrite32(0xFF, mem_gpio_int + GPIO_EXTIFALL_OFFSET);
+	iowrite32(0xFFFF, mem_gpio_int + GPIO_IFC_OFFSET);	
+	iowrite32(0x00FF, mem_gpio_int + GPIO_IEN_OFFSET);	
 
 	// Allocate device number for this character device
 	// Will return a truthy value on error
@@ -132,10 +127,6 @@ static int __init template_init(void)
 	{
 		printk("ERR: Failed to allocate device number\n");	
 		return -1;
-
-	} else
-	{
-		printk("SUCCESS: Device number was allocated\n");
 	}
 		
 	// Request ownership of interrupt channels and attach interrupt handler
@@ -152,15 +143,12 @@ static int __init template_init(void)
 	{
 		printk(KERN_ERR "ERR (%s): Failed to register character device\n", DEVICE_NAME);
 		return -1;
-	} else {
-		printk(KERN_INFO "%s: Device successfully registered\n", DEVICE_NAME);
-	}
-
+	} 
 	cl = class_create(THIS_MODULE, DEVICE_NAME);
     device_create(cl, NULL, dev_no, NULL, DEVICE_NAME);
-
+	
+	printk(KERN_INFO "Gamepad successfully set up\n");
 	return 0;
-
 }
 
 
@@ -169,7 +157,7 @@ static int __init template_init(void)
 * Frees reserved memory, release ownership of interrupt channels, release driver from kernel
 */
 
-static void __exit template_exit(void)
+static void __exit gamepad_exit(void)
 {
 	printk("You'll never take me alive!!!\n");
 	iowrite32(0x0000, GPIO_IEN);
@@ -195,8 +183,8 @@ static void __exit template_exit(void)
 
 }
 
-module_init(template_init);
-module_exit(template_exit);
+module_init(gamepad_init);
+module_exit(gamepad_exit);
 
 MODULE_DESCRIPTION("Small module, demo only, not very useful.");
 MODULE_LICENSE("GPL");

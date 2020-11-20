@@ -579,7 +579,7 @@ void update_actor_screenvalues(maze_t *maze,
 }
 
 /**
- * fucntion for moving an actor
+ * function for moving an actor
  * 
  * @param return the function retuns an int to identify the sucsess of the function.
  *               -1 for failed and 1 for found path and 2 for no path found   
@@ -622,8 +622,12 @@ int move_actor(actor_t *actor,
 }
 
 /**
- * ! for debugging, not use in actual game
+ * function for moving an actor, ignoring the walls
+ * ! For debugging, not use in actual game
+ * 
+ * Gives the player the possibility to move through the walls. Simplifies the debugging process by allowing to finish maps faster
  */
+
 void _move_actor_ignore_walls_(actor_t *actor,
                                maze_t *maze, 
                                direction_t direction,
