@@ -180,7 +180,6 @@ static void __exit gamepad_exit(void)
 	cdev_del(&my_cdev);
 
 	unregister_chrdev_region(dev_no, 1);
-
 }
 
 module_init(gamepad_init);
