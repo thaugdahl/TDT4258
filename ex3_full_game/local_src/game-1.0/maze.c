@@ -364,7 +364,6 @@ void generate_maze( pos_t    squares_x,
         exit(EXIT_FAILURE);
     }
     
-    printf("maze set: %p\n",maze->squares);
     clean_maze(maze);
 
     actor_stack_t path_stack;
@@ -382,7 +381,7 @@ void generate_maze( pos_t    squares_x,
     actor_t last_actor;
     uint8_t timeout;
     uint16_t backup_timeout = 0;
-    printf("start: x:%d y:%d\n", stack_read_top(&path_stack).x,stack_read_top(&path_stack).y);
+    printf("start position: x:%d y:%d\n", stack_read_top(&path_stack).x,stack_read_top(&path_stack).y);
     //algorithm
     while (1)
     {
@@ -391,18 +390,10 @@ void generate_maze( pos_t    squares_x,
         // choose next square with error check
         if (goto_next_square(maze, &path_stack) == 0)
         {
-            printf("\n\n!! done !!\n\n");
+            printf("!! done !!\n");
             break;
         }
         
-        //printf("x:%d y:%d len:%d\n\n", stack_read_top(&path_stack).x,
-        //       stack_read_top(&path_stack).y, path_stack.head);
-        //goto_next_square(maze, &path_stack);
-        //goto_next_square(maze, &path_stack);
-        //goto_next_square(maze, &path_stack);
-        //goto_next_square(maze, &path_stack);        
-
-        //break;
         // timeout
         if ((last_actor.x == stack_read_top(&path_stack).x) &&
             (last_actor.y == stack_read_top(&path_stack).y))
@@ -499,8 +490,8 @@ void write_maze_to_screenvalues(maze_t *maze,
     uint16_t index;
     uint16_t actor_start_x = ((maze->start_pos.x * maze->size_x) + ((maze->size_x - maze->actor_size_x) / 2));
     uint16_t actor_start_y = ((maze->start_pos.y * maze->size_y) + ((maze->size_y - maze->actor_size_y) / 2));
-    uint16_t actor_end_x   = actor_start_x + maze->actor_size_x;
-    uint16_t actor_end_y   = actor_start_y + maze->actor_size_y;
+    uint16_t actor_end_x   = actor_start_x + maze->actor_size_x - 1;
+    uint16_t actor_end_y   = actor_start_y + maze->actor_size_y - 1;
     for ( x = actor_start_x; x < actor_end_x; x++)
     {
         for (y = actor_start_y; y < actor_end_y; y++)
@@ -579,10 +570,10 @@ void update_actor_screenvalues(maze_t *maze,
 }
 
 /**
- * function for moving an actor
+ * @brief function for moving an actor
  * 
- * @param return the function retuns an int to identify the sucsess of the function.
- *               -1 for failed and 1 for found path and 2 for no path found   
+ * @return the function retuns an int to identify the success of the function.
+ *         -1 for failed and 1 for found path and 2 for no path found   
  */
 int move_actor(actor_t *actor,
                maze_t *maze, 
@@ -593,7 +584,7 @@ int move_actor(actor_t *actor,
 {
     // find the translated posistion
     actor_t translated_actor = translate_pos(*actor, direction);
-    // check if a new path is found, 0 not checked, 1 found, -1 not found
+    // check if a new path is found, -1 something went wrong, 1 found, 2 not found
     int found_path = -1;
     // get the indexes for the actor
     uint16_t actor_index     = COR_TO_INDEX(actor->x, actor->y, maze->length_x);
@@ -623,11 +614,14 @@ int move_actor(actor_t *actor,
 
 /**
  * function for moving an actor, ignoring the walls
- * ! For debugging, not use in actual game
  * 
- * Gives the player the possibility to move through the walls. Simplifies the debugging process by allowing to finish maps faster
+ * @name _move_actor_ignore_walls_
+ * 
+ * @brief ! For debugging, not use in actual game !.
+ * 
+ * @details Gives the player the possibility to move through the walls. 
+ *       Simplifies the debugging process by allowing to finish maps faster
  */
-
 void _move_actor_ignore_walls_(actor_t *actor,
                                maze_t *maze, 
                                direction_t direction,

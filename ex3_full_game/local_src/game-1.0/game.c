@@ -72,7 +72,7 @@ int fbfd;
 uint16_t *screen_values;
 int screensize_bytes;
 struct fb_copyarea full_screen_area;
-int game_state;
+volatile int game_state;
 
 void gamepad_handler(){
 	direction_t direction;
@@ -118,7 +118,6 @@ void gamepad_handler(){
 
 	if(found_valid_direction_from_gamepad_handler)
 	{
-		// TODO: STOP CHEATING
 		move_actor(	&player,
 				&maze, 
 				direction,
@@ -145,7 +144,7 @@ int gamepad_init()
     gamepad = fopen("/dev/gamepad", "rb");
 
 	if (!gamepad) {
-     	perror("Error: gamepad is kil");
+     	perror("Error: gamepad is kil (Be sure that /dev/gamepad exists)\n");
      	exit(EXIT_FAILURE);
 	}
 	
@@ -153,12 +152,11 @@ int gamepad_init()
         printf("Signal handler registration goes \"brrrrrrr!\"\n");
         exit(EXIT_FAILURE);
     }
+
 	int pid = getpid();
-	
 	if (fcntl(fileno(gamepad), F_SETOWN, pid) == -1){
 		printf("Mom, I want this pid %d\n",pid);
         printf("Could not get pid, \"We have pid at home\"\npid at home: %x\n", pid);
-		printf("fileno(gamepad)%d\n",fileno(gamepad));
         exit(EXIT_FAILURE);
     }
 	long oflags = fcntl(fileno(gamepad), F_GETFL);
@@ -180,8 +178,6 @@ int main(int argc, char *argv[])
 	full_screen_area.height = SCREEN_SIZE_Y;
 	full_screen_area.width = SCREEN_SIZE_X;
 
-	//set the seed value equal to the time
-	srand(time(0));
 	// screeninfo must be decleared on in main
 	struct fb_var_screeninfo screeninfo;
 
@@ -202,8 +198,10 @@ int main(int argc, char *argv[])
 		switch (game_state)
 		{
 		case GAME_STARTUP:
+			//set the seed value equal to the time
+			srand(time(0));
 			printf("Game is initalizing\n");
-			generate_maze(8, 7, 20, 20, 10, 10, &maze, 1, 1, 1, 2, 0x0000, 0x00ff, 0xffff, 0x0380);
+			generate_maze(8, 7, 20, 20, 10, 10, &maze, 1, 1, 7, 6, 0x0000, 0x00ff, 0xffff, 0x0380);
 			player = maze.start_pos;
 			screen_fill(maze.BG_color, screen_values, fbfd, &full_screen_area, screensize_bytes);
 			screen_refresh(fbfd, &full_screen_area);
@@ -215,7 +213,7 @@ int main(int argc, char *argv[])
 			break;
 			
 		case GAME_RUNNING:
-			__asm__ ("wfi");
+			//__asm__ ("wfi");
 			break;
 
 		case GAME_PHINISH:
@@ -237,5 +235,3 @@ int main(int argc, char *argv[])
 
 	exit(EXIT_SUCCESS);
 }
-
-

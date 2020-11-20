@@ -21,7 +21,6 @@
 #include <asm/signal.h>
 #include <asm/siginfo.h>
 
-
 #include "efm32gg.h"
 
 
@@ -150,8 +149,6 @@ static int __init gamepad_init(void)
 	printk(KERN_INFO "Gamepad successfully set up\n");
 	return 0;
 }
-
-
 
 /**
 * Frees reserved memory, release ownership of interrupt channels, release driver from kernel
